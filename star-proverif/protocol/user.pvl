@@ -1,0 +1,40 @@
+
+
+letfun UserAuthCore(cred: bitstring, cnt: counter, t: period, pk: pkey) = 
+  let authPayload = AuthRequestPlain(t, cnt, cred) in
+  let cipher = aenc(authPayload, pk) in
+  let Credential(code: bitstring, uid: bitstring) = cred in 
+  event user_authenticating(uid);
+  cipher.
+
+letfun UserRegisterCoreReq(id: identity, pk: pkey) =
+  new ck: bitstring;
+
+  let cipher1 = aenc(ck, pk) in
+  let request = RegisterRequest(id, cipher1) in 
+  (ck, request).
+
+letfun UserRegisterCoreResp(regResp: cipher, ck: bitstring) =
+  let cred = sdec(regResp, ck) in
+  cred.
+
+let UserRegister(pk: pkey, id: identity) =
+  let (ck:bitstring, request: bitstring) = UserRegisterCoreReq(id, pk) in
+
+  out(reg_net, request);
+  in(reg_net, regResp: cipher);
+
+  let cred = UserRegisterCoreResp(regResp, ck) in
+
+  out(user_secure, (id, cred, c0)).
+
+let UserAuth(pk: pkey) =
+  in(user_secure, (id: identity, cred: bitstring, cnt: counter));
+  
+  (* if cnt <> c3 then *)
+    let authCipher = UserAuthCore(cred, cnt, today, pk) in
+    out(auth_net, authCipher) |
+
+    let next = counter_next(cnt) in
+    out(user_secure, (id, cred, next));
+  0.

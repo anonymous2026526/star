@@ -1,0 +1,175 @@
+cargo build -j 2 --bin analysis --features timecop --release
+warning: file `/home/anonymous2/star/core/benches/comm.rs` found to be present in multiple build targets:
+  * `bin` target `comm`
+  * `bench` target `comm`
+warning: unused import: `constant_time_utils::time`
+ --> analysis/main.rs:1:5
+  |
+1 | use constant_time_utils::time;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `hpke::Serializable`
+ --> analysis/main.rs:2:5
+  |
+2 | use hpke::Serializable;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `star_core::serv::core::token`
+ --> analysis/main.rs:6:5
+  |
+6 | use star_core::serv::core::token;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant `period` should have an upper case name
+ --> analysis/main.rs:9:7
+  |
+9 | const period: u64 = 1;
+  |       ^^^^^^
+  |
+  = note: `#[warn(non_upper_case_globals)]` (part of `#[warn(nonstandard_style)]`) on by default
+help: convert the identifier to upper case
+  |
+9 - const period: u64 = 1;
+9 + const PERIOD: u64 = 1;
+  |
+
+warning: `star-core` (bin "analysis") generated 4 warnings (run `cargo fix --bin "analysis"` to apply 4 suggestions)
+    Finished `release` profile [optimized] target(s) in 0.14s
+valgrind ./target/release/analysis
+==4966== Memcheck, a memory error detector
+==4966== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==4966== Using Valgrind-3.26.0 and LibVEX; rerun with -h for copyright info
+==4966== Command: ./target/release/analysis
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x401C5A4: <hpke::kem::dhkem::x25519_hkdfsha256::X25519HkdfSha256 as hpke::kem::Kem>::decap (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40153BE: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40144EC: star_core::secure_channel::server::SecureChannelServer::respond_cipher (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x400FF77: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x4017CD5: chacha20poly1305::cipher::Cipher<C>::decrypt_in_place_detached (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401770A: <chacha20poly1305::ChaChaPoly1305<C,N> as aead::AeadInPlace>::decrypt_in_place_detached (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4015AAE: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40144EC: star_core::secure_channel::server::SecureChannelServer::respond_cipher (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x400FF77: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x4015AB5: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40144EC: star_core::secure_channel::server::SecureChannelServer::respond_cipher (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x400FF77: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x401C5A4: <hpke::kem::dhkem::x25519_hkdfsha256::X25519HkdfSha256 as hpke::kem::Kem>::decap (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40153BE: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4018655: star_core::serv::enclave::Enclave::issue_token (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401008E: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x4017CD5: chacha20poly1305::cipher::Cipher<C>::decrypt_in_place_detached (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401770A: <chacha20poly1305::ChaChaPoly1305<C,N> as aead::AeadInPlace>::decrypt_in_place_detached (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4015AAE: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4018655: star_core::serv::enclave::Enclave::issue_token (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401008E: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x4015AB5: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4018655: star_core::serv::enclave::Enclave::issue_token (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401008E: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x4018795: star_core::serv::enclave::Enclave::issue_token_plain (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40186A1: star_core::serv::enclave::Enclave::issue_token (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401008E: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x401C5A4: <hpke::kem::dhkem::x25519_hkdfsha256::X25519HkdfSha256 as hpke::kem::Kem>::decap (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011B6A: hpke::setup::setup_receiver (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40101B7: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x401C5A4: <hpke::kem::dhkem::x25519_hkdfsha256::X25519HkdfSha256 as hpke::kem::Kem>::decap (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40153BE: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40104B8: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x4017CD5: chacha20poly1305::cipher::Cipher<C>::decrypt_in_place_detached (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401770A: <chacha20poly1305::ChaChaPoly1305<C,N> as aead::AeadInPlace>::decrypt_in_place_detached (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4015AAE: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40104B8: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== Conditional jump or move depends on uninitialised value(s)
+==4966==    at 0x4015AB5: star_core::secure_channel::server::SecureChannelServer::receive_hpke (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x40104B8: analysis::main (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4011865: std::sys::backtrace::__rust_begin_short_backtrace (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x401185B: std::rt::lang_start::{{closure}} (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040FD4: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+done
+==4966== 
+==4966== HEAP SUMMARY:
+==4966==     in use at exit: 456 bytes in 1 blocks
+==4966==   total heap usage: 29 allocs, 28 frees, 5,072 bytes allocated
+==4966== 
+==4966== 456 bytes in 1 blocks are still reachable in loss record 1 of 1
+==4966==    at 0x48D8810: malloc (in /nix/store/kdxw0vckxzapkgnk2qzsn0jy3c2dq5x2-valgrind-3.26.0/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4966==    by 0x40514C4: alloc::collections::btree::map::entry::VacantEntry<K,V,A>::insert_entry (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4041D12: std::sys::pal::unix::stack_overflow::thread_info::set_current_info (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x402E575: std::sys::pal::unix::stack_overflow::imp::init (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x404E43B: std::sys::pal::unix::init (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4040F80: std::rt::lang_start_internal (in /home/anonymous2/star/core/target/release/analysis)
+==4966==    by 0x4010A83: main (in /home/anonymous2/star/core/target/release/analysis)
+==4966== 
+==4966== LEAK SUMMARY:
+==4966==    definitely lost: 0 bytes in 0 blocks
+==4966==    indirectly lost: 0 bytes in 0 blocks
+==4966==      possibly lost: 0 bytes in 0 blocks
+==4966==    still reachable: 456 bytes in 1 blocks
+==4966==         suppressed: 0 bytes in 0 blocks
+==4966== 
+==4966== Use --track-origins=yes to see where uninitialised values come from
+==4966== For lists of detected and suppressed errors, rerun with: -s
+==4966== ERROR SUMMARY: 11 errors from 11 contexts (suppressed: 0 from 0)

@@ -1,0 +1,5 @@
+credential issuance request bytes: 144
+credential issuance response bytes: 92
+auth plaintext bytes: 80
+auth sent bytes: 192
+token response bytes: 32

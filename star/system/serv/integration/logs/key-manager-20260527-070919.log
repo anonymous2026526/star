@@ -1,0 +1,5 @@
+warning: /home/anonymous2/star/core/Cargo.toml: file `/home/anonymous2/star/core/benches/comm.rs` found to be present in multiple build targets:
+  * `bin` target `comm`
+  * `bench` target `comm`
+    Finished `release` profile [optimized] target(s) in 0.53s
+     Running `target/release/key-manager-service`

@@ -1,0 +1,701 @@
+
+== Environment ==
+env file: /home/anonymous2/star/system/serv/integration/env.sh
+main log: /home/anonymous2/star/system/serv/integration/logs/integration-20260527-070919.log
+app log: /home/anonymous2/star/system/serv/integration/logs/star-app-attest-20260527-070919.log
+key-manager log: /home/anonymous2/star/system/serv/integration/logs/key-manager-20260527-070919.log
+inspect log: /home/anonymous2/star/system/serv/integration/logs/inspect-20260527-070919.log
+verify log: /home/anonymous2/star/system/serv/integration/logs/verify-20260527-070919.log
+AR=ar
+CC=gcc
+LD_LIBRARY_PATH=/nix/store/by19gg2pqp2b1gqphdf6bwk2g3hgak79-openssl-3.6.2/lib:/run/current-system/sw/lib
+NO_PROXY=127.0.0.1,localhost
+PATH=/nix/store/lfbzxs5wyqd2122mpbj5azkxhxspw9cd-bash-interactive-5.3p3/bin:/nix/store/5mrhn7sj5hmx1sqqj1568sya450yarvx-patchelf-0.15.2/bin:/nix/store/8v97ngkcpfzgghwnnr7fsz33p2x22gy9-gcc-wrapper-14.3.0/bin:/nix/store/ipr6y28viyqkhkg58rdvy27m01q5j5nh-gcc-14.3.0/bin:/nix/store/6s5jp0cchd4jjq474xkfymj18l6i5x95-glibc-2.40-224-bin/bin:/nix/store/hqkszxk2c0cxvd04xa4gsaqs182dw8l2-coreutils-9.8/bin:/nix/store/iz5lckcsg66r223si2gck7csk2hihj0m-binutils-wrapper-2.44/bin:/nix/store/i7mdvmliqcb5lz0nqija8rq55vws6gi8-binutils-2.44/bin:/nix/store/qhr81gkafwyczvwk173ymahhwrilfv5i-pkg-config-wrapper-0.29.2/bin:/nix/store/3ffi89rlwcqww9x71pf95miyik5jhnv9-openssl-3.6.2-bin/bin:/nix/store/fnvsac4yaw2146ig4p54xnnm6b6alkjw-gnumake-4.4.1/bin:/nix/store/snsqw9v764wfyk77s7b516wayvz4nvk1-clang-wrapper-21.1.7/bin:/nix/store/9k73m9j7cxldplpn2ch43a79sk9qm5b7-clang-21.1.7/bin:/nix/store/scgppvjiva995wvgbsc86n0kviy9qb30-binutils-wrapper-2.44/bin:/nix/store/3lim3czb4yp4fns1airldsrp985l8dl2-compiler-rt-libc-21.1.7/bin:/nix/store/hqkszxk2c0cxvd04xa4gsaqs182dw8l2-coreutils-9.8/bin:/nix/store/8xhaz2ysixijy8sgzmwmhlialqqind1p-findutils-4.10.0/bin:/nix/store/cw3a3yz8vrfsz53ypjw8hspy5hzzx2py-diffutils-3.12/bin:/nix/store/4zi0y6cmpjnbhmgrx7vfgqkyv5z1z4z0-gnused-4.9/bin:/nix/store/k3wiv3qqa4y0im5v1iq2jy4h9cm32dfc-gnugrep-3.12/bin:/nix/store/88d79vz87a5g3wsclabrgqd93jqh5yv8-gawk-5.3.2/bin:/nix/store/xl6pd2spjajwcpq09fnmnjv5psqmlmma-gnutar-1.35/bin:/nix/store/rhp8ph1q699irvmacp27x3sw84slk32i-gzip-1.14/bin:/nix/store/g36v1ss2ywkqp751wlkhnd8n9zaqkg2w-bzip2-1.0.8-bin/bin:/nix/store/djjc508wnfdwmkv5xrxxqx5r2v09yxfp-gnumake-4.4.1/bin:/nix/store/3hgg7pr65imdrifqqh3flg3arvkc2r22-bash-5.3p3/bin:/nix/store/wgnxx41q3d2cx6j5wk2s5bkjyzrr3ggn-patch-2.8/bin:/nix/store/3x3p3mhwn18q7qplxn34i13rdmswi0qm-xz-5.8.3-bin/bin:/nix/store/018l43lbsqbrsasrfdcxxb5s4s161fkr-file-5.45/bin:/run/wrappers/bin:/home/anonymous2/.nix-profile/bin:/nix/profile/bin:/home/anonymous2/.local/state/nix/profile/bin:/etc/profiles/per-user/anonymous2/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin
+RANLIB=ranlib
+
+== Build SGX Artifacts ==
+using /home/anonymous2/star/system/serv/target/x86_64-fortanix-unknown-sgx/release/key-manager.sgxs
+using /home/anonymous2/star/system/serv/target/x86_64-fortanix-unknown-sgx/release/enclave-bench-max-count.sgxs
+
+== Start AESM TCP proxy ==
+AESM proxy pid: 272013
+
+== Run Key-Manager Separately ==
+key-manager pid: 272015
+
+== README Test ==
++ cargo test --release
+warning: /home/anonymous2/star/core/Cargo.toml: file `/home/anonymous2/star/core/benches/comm.rs` found to be present in multiple build targets:
+  * `bin` target `comm`
+  * `bench` target `comm`
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> /home/anonymous2/star/core/src/secure_channel/client.rs:79:28
+   |
+79 |         let nonce = Nonce::from_slice(nonce_bytes);
+   |                            ^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> /home/anonymous2/star/core/src/secure_channel/server.rs:85:28
+   |
+85 |         let nonce = Nonce::from_slice(&nonce_bytes);
+   |                            ^^^^^^^^^^
+
+warning: `star-core` (lib) generated 2 warnings
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> utils/manage-key/enclave/src/seal.rs:67:24
+   |
+67 |     let nonce = Nonce::from_slice(&nonce_bytes);
+   |                        ^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> utils/manage-key/enclave/src/seal.rs:84:24
+   |
+84 |     let nonce = Nonce::from_slice(&blob.nonce);
+   |                        ^^^^^^^^^^
+
+warning: `key-manager` (lib) generated 2 warnings
+warning: `key-manager` (lib test) generated 2 warnings (2 duplicates)
+    Finished `release` profile [optimized] target(s) in 0.84s
+     Running unittests src/lib.rs (target/release/deps/enclave-bcc6192af72070ef)
+
+running 7 tests
+test attest::tests::tests::read_le_u32_reads_offset_and_rejects_short_inputs ... ok
+test attest::tests::tests::attest_reports_unsupported_outside_sgx ... ok
+test attest::tests::tests::select_ecdsa_p256_key_id_skips_short_and_non_ecdsa_keys ... ok
+test tests::tests::init_rejects_raw_key_bundle ... ok
+test tests::tests::empty_init_only_prepares_key_manager_transfer ... ok
+test tests::tests::key_bundle_round_trips ... ok
+test tests::tests::measured_max_count_matches_policy ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/enclave-d7d8c026c2de146a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/key_manager-cdd43aa51a89ad5f)
+
+running 6 tests
+test seal::tests::tests::public_seal_reports_unsupported_outside_sgx ... ok
+test seal::tests::tests::sealed_blob_crypto_round_trips_with_supplied_key ... ok
+test seal::tests::tests::sealed_blob_rejects_modified_ciphertext ... ok
+test tests::tests::init_rejects_plain_key_bundle_outside_sgx ... ok
+test tests::tests::key_bundle_round_trips ... ok
+test tests::tests::public_key_attest_reports_unsupported_outside_sgx ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/key_manager-60569b3338beb053)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/key_manager_client-eabe7277546c4f92)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/key_manager_service-1b13b46cfdd12b85)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/key_manager_service-1befbdf4889570cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/star_app-805aeb7fb7b28319)
+
+running 2 tests
+test tests::test_all ... ok
+test tests::public_key_attestation_quote_verifies_with_tools_policy ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.65s
+
+     Running unittests src/main.rs (target/release/deps/star_app-d4e6fc6ce1bcb476)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/star_attestation-e5b9a25e0785ef9c)
+
+running 4 tests
+test tests::tests::policy_and_quote_round_trip ... ok
+test tests::tests::policy_rejects_wrong_mrenclave ... ok
+test tests::tests::raw_quote_evidence_round_trips ... ok
+test tests::tests::verifies_public_key_policy ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/star_tools-7111c0ce00c8d0ea)
+
+running 6 tests
+test tests::tests::extracts_base64_quote_from_startup_log_line ... ok
+test tests::tests::extracts_padded_base64_quote_from_startup_log_line ... ok
+test tests::tests::hex_round_trips_and_accepts_separators ... ok
+test tests::tests::names_dcap_statuses ... ok
+test tests::tests::parses_quote_report_fields ... ok
+test tests::tests::policy_rejects_untrusted_debug_quote ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/star_tools-6ba8a1742d422bd5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests enclave
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests key_manager
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests key_manager_client
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests key_manager_service
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests star_app
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests star_attestation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests star_tools
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+== README Reproduce SGX Benchmarks ==
++ cargo bench
+warning: /home/anonymous2/star/core/Cargo.toml: file `/home/anonymous2/star/core/benches/comm.rs` found to be present in multiple build targets:
+  * `bin` target `comm`
+  * `bench` target `comm`
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> /home/anonymous2/star/core/src/secure_channel/client.rs:79:28
+   |
+79 |         let nonce = Nonce::from_slice(nonce_bytes);
+   |                            ^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> /home/anonymous2/star/core/src/secure_channel/server.rs:85:28
+   |
+85 |         let nonce = Nonce::from_slice(&nonce_bytes);
+   |                            ^^^^^^^^^^
+
+warning: `star-core` (lib) generated 2 warnings
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> utils/manage-key/enclave/src/seal.rs:67:24
+   |
+67 |     let nonce = Nonce::from_slice(&nonce_bytes);
+   |                        ^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `hpke::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> utils/manage-key/enclave/src/seal.rs:84:24
+   |
+84 |     let nonce = Nonce::from_slice(&blob.nonce);
+   |                        ^^^^^^^^^^
+
+warning: `key-manager` (lib) generated 2 warnings
+warning: `key-manager` (lib test) generated 2 warnings (2 duplicates)
+warning: unused import: `std::time::Duration`
+ --> app/benches/common/mod.rs:5:5
+  |
+5 | use std::time::Duration;
+  |     ^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `manifest_path` is never used
+ --> app/benches/common/mod.rs:7:8
+  |
+7 | pub fn manifest_path(relative_path: &str) -> String {
+  |        ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `reserve_local_addr` is never used
+ --> app/benches/common/local_http.rs:3:8
+  |
+3 | pub fn reserve_local_addr() -> String {
+  |        ^^^^^^^^^^^^^^^^^^
+
+warning: enum `StartupProbe` is never used
+ --> app/benches/common/retry.rs:4:10
+  |
+4 | pub enum StartupProbe {
+  |          ^^^^^^^^^^^^
+
+warning: function `wait_until_ready` is never used
+  --> app/benches/common/retry.rs:10:8
+   |
+10 | pub fn wait_until_ready<F>(service: &str, retries: u32, retry_delay: Duration, mut probe: F)
+   |        ^^^^^^^^^^^^^^^^
+
+warning: `star_app` (bench "extension") generated 5 warnings (run `cargo fix --bench "extension" -p star_app` to apply 1 suggestion)
+warning: constant `DEFAULT_AESM_PROXY` is never used
+  --> app/benches/common/aesm_proxy.rs:11:7
+   |
+11 | const DEFAULT_AESM_PROXY: &str = "127.0.0.1:5555";
+   |       ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `DEFAULT_AESM_SOCKET` is never used
+  --> app/benches/common/aesm_proxy.rs:12:7
+   |
+12 | const DEFAULT_AESM_SOCKET: &str = "/run/aesmd/aesm.socket";
+   |       ^^^^^^^^^^^^^^^^^^^
+
+warning: struct `AesmProxyGuard` is never constructed
+  --> app/benches/common/aesm_proxy.rs:14:12
+   |
+14 | pub struct AesmProxyGuard {
+   |            ^^^^^^^^^^^^^^
+
+warning: associated function `start` is never used
+  --> app/benches/common/aesm_proxy.rs:20:12
+   |
+19 | impl AesmProxyGuard {
+   | ------------------- associated function in this implementation
+20 |     pub fn start() -> Self {
+   |            ^^^^^
+
+warning: struct `EnvVarGuard` is never constructed
+  --> app/benches/common/aesm_proxy.rs:46:8
+   |
+46 | struct EnvVarGuard {
+   |        ^^^^^^^^^^^
+
+warning: associated function `set` is never used
+  --> app/benches/common/aesm_proxy.rs:52:8
+   |
+51 | impl EnvVarGuard {
+   | ---------------- associated function in this implementation
+52 |     fn set(name: &'static str, value: impl AsRef<OsStr>) -> Self {
+   |        ^^^
+
+warning: struct `AesmProxy` is never constructed
+  --> app/benches/common/aesm_proxy.rs:73:8
+   |
+73 | struct AesmProxy {
+   |        ^^^^^^^^^
+
+warning: associated function `start_on` is never used
+  --> app/benches/common/aesm_proxy.rs:80:8
+   |
+79 | impl AesmProxy {
+   | -------------- associated function in this implementation
+80 |     fn start_on(addr: &str) -> io::Result<Self> {
+   |        ^^^^^^^^
+
+warning: function `aesm_socket_path` is never used
+   --> app/benches/common/aesm_proxy.rs:128:4
+    |
+128 | fn aesm_socket_path() -> PathBuf {
+    |    ^^^^^^^^^^^^^^^^
+
+warning: function `forward_aesm_connection` is never used
+   --> app/benches/common/aesm_proxy.rs:135:4
+    |
+135 | fn forward_aesm_connection(mut tcp: TcpStream, socket_path: PathBuf) -> io::Result<()> {
+    |    ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `read_aesm_frame` is never used
+   --> app/benches/common/aesm_proxy.rs:164:4
+    |
+164 | fn read_aesm_frame(stream: &mut impl Read) -> io::Result<Option<(u32, Vec<u8>)>> {
+    |    ^^^^^^^^^^^^^^^
+
+warning: variant `Fatal` is never constructed
+ --> app/benches/common/retry.rs:7:5
+  |
+4 | pub enum StartupProbe {
+  |          ------------ variant in this enum
+...
+7 |     Fatal(String),
+  |     ^^^^^
+
+warning: `star_app` (bench "tls") generated 13 warnings (1 duplicate)
+warning: unused `Result` that must be used
+   --> app/benches/filter.rs:303:17
+    |
+303 |                 black_box(result);
+    |                 ^^^^^^^^^^^^^^^^^
+    |
+    = note: this `Result` may be an `Err` variant, which should be handled
+    = note: `#[warn(unused_must_use)]` (part of `#[warn(unused)]`) on by default
+help: use `let _ = ...` to ignore the resulting value
+    |
+303 |                 let _ = black_box(result);
+    |                 +++++++
+
+warning: unused `Result` that must be used
+   --> app/benches/filter.rs:340:17
+    |
+340 |                 black_box(result);
+    |                 ^^^^^^^^^^^^^^^^^
+    |
+    = note: this `Result` may be an `Err` variant, which should be handled
+help: use `let _ = ...` to ignore the resulting value
+    |
+340 |                 let _ = black_box(result);
+    |                 +++++++
+
+   Compiling star_app v0.1.0 (/home/anonymous2/star/system/serv/app)
+warning: `star_app` (bench "filter") generated 7 warnings (5 duplicates)
+    Finished `bench` profile [optimized] target(s) in 3.32s
+     Running unittests src/lib.rs (target/release/deps/enclave-bcc6192af72070ef)
+
+running 7 tests
+test attest::tests::tests::attest_reports_unsupported_outside_sgx ... ignored
+test attest::tests::tests::read_le_u32_reads_offset_and_rejects_short_inputs ... ignored
+test attest::tests::tests::select_ecdsa_p256_key_id_skips_short_and_non_ecdsa_keys ... ignored
+test tests::tests::empty_init_only_prepares_key_manager_transfer ... ignored
+test tests::tests::init_rejects_raw_key_bundle ... ignored
+test tests::tests::key_bundle_round_trips ... ignored
+test tests::tests::measured_max_count_matches_policy ... ignored
+
+test result: ok. 0 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/enclave-d7d8c026c2de146a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/key_manager-cdd43aa51a89ad5f)
+
+running 6 tests
+test seal::tests::tests::public_seal_reports_unsupported_outside_sgx ... ignored
+test seal::tests::tests::sealed_blob_crypto_round_trips_with_supplied_key ... ignored
+test seal::tests::tests::sealed_blob_rejects_modified_ciphertext ... ignored
+test tests::tests::init_rejects_plain_key_bundle_outside_sgx ... ignored
+test tests::tests::key_bundle_round_trips ... ignored
+test tests::tests::public_key_attest_reports_unsupported_outside_sgx ... ignored
+
+test result: ok. 0 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/key_manager-60569b3338beb053)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/key_manager_client-eabe7277546c4f92)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/key_manager_service-1b13b46cfdd12b85)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/key_manager_service-1befbdf4889570cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/star_app-805aeb7fb7b28319)
+
+running 2 tests
+test tests::public_key_attestation_quote_verifies_with_tools_policy ... ignored
+test tests::test_all ... ignored
+
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/star_app-d4e6fc6ce1bcb476)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running benches/call.rs (target/release/deps/call-67cb23cf7724d6e6)
+Gnuplot not found, using plotters backend
+Benchmarking enclave_call_latency/op_one
+Benchmarking enclave_call_latency/op_one: Warming up for 3.0000 s
+Benchmarking enclave_call_latency/op_one: Collecting 40 samples in estimated 6.1376 s (28k iterations)
+Benchmarking enclave_call_latency/op_one: Analyzing
+enclave_call_latency/op_one
+                        time:   [222.20 µs 224.46 µs 226.69 µs]
+                        thrpt:  [4.4114 Kelem/s 4.4551 Kelem/s 4.5005 Kelem/s]
+                 change:
+                        time:   [-0.8173% +0.4181% +1.6908%] (p = 0.54 > 0.05)
+                        thrpt:  [-1.6627% -0.4164% +0.8240%]
+                        No change in performance detected.
+Found 2 outliers among 40 measurements (5.00%)
+  1 (2.50%) low mild
+  1 (2.50%) high mild
+
+     Running benches/extension.rs (target/release/deps/extension-db242ee062440703)
+Gnuplot not found, using plotters backend
+Benchmarking client_hello_reject/openssl_missing_extension
+Benchmarking client_hello_reject/openssl_missing_extension: Warming up for 1.0000 s
+Benchmarking client_hello_reject/openssl_missing_extension: Collecting 20 samples in estimated 4.0057 s (127k iterations)
+Benchmarking client_hello_reject/openssl_missing_extension: Analyzing
+client_hello_reject/openssl_missing_extension
+                        time:   [31.283 µs 31.335 µs 31.409 µs]
+                        thrpt:  [31.838 Kelem/s 31.914 Kelem/s 31.966 Kelem/s]
+                 change:
+                        time:   [+0.7802% +1.5502% +2.4386%] (p = 0.00 < 0.05)
+                        thrpt:  [-2.3805% -1.5266% -0.7741%]
+                        Change within noise threshold.
+Found 3 outliers among 20 measurements (15.00%)
+  1 (5.00%) high mild
+  2 (10.00%) high severe
+Benchmarking client_hello_reject/star_filter_invalid_credential_openssl_parse
+Benchmarking client_hello_reject/star_filter_invalid_credential_openssl_parse: Warming up for 1.0000 s
+Benchmarking client_hello_reject/star_filter_invalid_credential_openssl_parse: Collecting 20 samples in estimated 4.1736 s (5040 iterations)
+Benchmarking client_hello_reject/star_filter_invalid_credential_openssl_parse: Analyzing
+client_hello_reject/star_filter_invalid_credential_openssl_parse
+                        time:   [793.73 µs 818.49 µs 841.27 µs]
+                        thrpt:  [1.1887 Kelem/s 1.2218 Kelem/s 1.2599 Kelem/s]
+                 change:
+                        time:   [-8.0239% -4.3280% -0.5697%] (p = 0.05 < 0.05)
+                        thrpt:  [+0.5729% +4.5238% +8.7239%]
+                        Change within noise threshold.
+Benchmarking client_hello_reject/star_filter_replayed_token_openssl_parse
+Benchmarking client_hello_reject/star_filter_replayed_token_openssl_parse: Warming up for 1.0000 s
+Benchmarking client_hello_reject/star_filter_replayed_token_openssl_parse: Collecting 20 samples in estimated 4.0658 s (5250 iterations)
+Benchmarking client_hello_reject/star_filter_replayed_token_openssl_parse: Analyzing
+client_hello_reject/star_filter_replayed_token_openssl_parse
+                        time:   [844.05 µs 869.46 µs 891.90 µs]
+                        thrpt:  [1.1212 Kelem/s 1.1501 Kelem/s 1.1848 Kelem/s]
+                 change:
+                        time:   [-8.9766% -4.8274% -1.3462%] (p = 0.02 < 0.05)
+                        thrpt:  [+1.3646% +5.0723% +9.8619%]
+                        Performance has improved.
+
+Benchmarking client_hello_reject_parallel_throughput/openssl_missing_extension
+Benchmarking client_hello_reject_parallel_throughput/openssl_missing_extension: Warming up for 1.0000 s
+Benchmarking client_hello_reject_parallel_throughput/openssl_missing_extension: Collecting 20 samples in estimated 4.4158 s (2100 iterations)
+Benchmarking client_hello_reject_parallel_throughput/openssl_missing_extension: Analyzing
+client_hello_reject_parallel_throughput/openssl_missing_extension
+                        time:   [2.0852 ms 2.0907 ms 2.0958 ms]
+                        thrpt:  [61.074 Kelem/s 61.222 Kelem/s 61.384 Kelem/s]
+                 change:
+                        time:   [+1.8215% +2.5337% +3.7965%] (p = 0.00 < 0.05)
+                        thrpt:  [-3.6577% -2.4711% -1.7889%]
+                        Performance has regressed.
+Found 2 outliers among 20 measurements (10.00%)
+  2 (10.00%) high severe
+Benchmarking client_hello_reject_parallel_throughput/star_filter_replayed_token_openssl_parse
+Benchmarking client_hello_reject_parallel_throughput/star_filter_replayed_token_openssl_parse: Warming up for 1.0000 s
+Benchmarking client_hello_reject_parallel_throughput/star_filter_replayed_token_openssl_parse: Collecting 20 samples in estimated 4.9763 s (100 iterations)
+Benchmarking client_hello_reject_parallel_throughput/star_filter_replayed_token_openssl_parse: Analyzing
+client_hello_reject_parallel_throughput/star_filter_replayed_token_openssl_parse
+                        time:   [48.671 ms 48.873 ms 49.075 ms]
+                        thrpt:  [2.6083 Kelem/s 2.6191 Kelem/s 2.6299 Kelem/s]
+                 change:
+                        time:   [-0.0633% +0.8716% +1.8103%] (p = 0.07 > 0.05)
+                        thrpt:  [-1.7781% -0.8641% +0.0633%]
+                        No change in performance detected.
+Benchmarking client_hello_reject_parallel_throughput/star_filter_invalid_credential_openssl_parse
+Benchmarking client_hello_reject_parallel_throughput/star_filter_invalid_credential_openssl_parse: Warming up for 1.0000 s
+Benchmarking client_hello_reject_parallel_throughput/star_filter_invalid_credential_openssl_parse: Collecting 20 samples in estimated 4.8848 s (100 iterations)
+Benchmarking client_hello_reject_parallel_throughput/star_filter_invalid_credential_openssl_parse: Analyzing
+client_hello_reject_parallel_throughput/star_filter_invalid_credential_openssl_parse
+                        time:   [48.395 ms 48.628 ms 48.858 ms]
+                        thrpt:  [2.6199 Kelem/s 2.6322 Kelem/s 2.6449 Kelem/s]
+                 change:
+                        time:   [+0.0555% +0.9829% +1.7472%] (p = 0.03 < 0.05)
+                        thrpt:  [-1.7172% -0.9733% -0.0554%]
+                        Change within noise threshold.
+
+     Running benches/filter.rs (target/release/deps/filter-890bbc96912d7979)
+Gnuplot not found, using plotters backend
+Benchmarking star_filter_issue_token_and_route/latency
+Benchmarking star_filter_issue_token_and_route/latency: Warming up for 3.0000 s
+
+Warning: Unable to complete 100 samples in 5.0s. You may wish to increase target time to 5.3s, enable flat sampling, or reduce sample count to 60.
+Benchmarking star_filter_issue_token_and_route/latency: Collecting 100 samples in estimated 5.3401 s (5050 iterations)
+Benchmarking star_filter_issue_token_and_route/latency: Analyzing
+star_filter_issue_token_and_route/latency
+                        time:   [692.69 µs 699.27 µs 705.28 µs]
+                        thrpt:  [1.4179 Kelem/s 1.4301 Kelem/s 1.4437 Kelem/s]
+                 change:
+                        time:   [-3.5802% -2.4237% -1.4031%] (p = 0.00 < 0.05)
+                        thrpt:  [+1.4230% +2.4839% +3.7132%]
+                        Performance has improved.
+Benchmarking star_filter_issue_token_and_route/parallel_throughput
+Benchmarking star_filter_issue_token_and_route/parallel_throughput: Warming up for 3.0000 s
+
+Warning: Unable to complete 100 samples in 5.0s. You may wish to increase target time to 8.8s, or reduce sample count to 50.
+Benchmarking star_filter_issue_token_and_route/parallel_throughput: Collecting 100 samples in estimated 8.7958 s (100 iterations)
+Benchmarking star_filter_issue_token_and_route/parallel_throughput: Analyzing
+star_filter_issue_token_and_route/parallel_throughput
+                        time:   [47.865 ms 48.179 ms 48.496 ms]
+                        thrpt:  [2.6394 Kelem/s 2.6568 Kelem/s 2.6742 Kelem/s]
+                 change:
+                        time:   [+1.0056% +1.9171% +2.8615%] (p = 0.00 < 0.05)
+                        thrpt:  [-2.7819% -1.8810% -0.9956%]
+                        Performance has regressed.
+
+Benchmarking star_filter_check_duplication/latency
+Benchmarking star_filter_check_duplication/latency: Warming up for 3.0000 s
+Benchmarking star_filter_check_duplication/latency: Collecting 40 samples in estimated 4.0002 s (6.1M iterations)
+Benchmarking star_filter_check_duplication/latency: Analyzing
+star_filter_check_duplication/latency
+                        time:   [433.31 ns 439.44 ns 445.08 ns]
+                        thrpt:  [2.2468 Melem/s 2.2756 Melem/s 2.3078 Melem/s]
+                 change:
+                        time:   [-54.075% -24.240% +12.879%] (p = 0.65 > 0.05)
+                        thrpt:  [-11.410% +31.996% +117.74%]
+                        No change in performance detected.
+Found 4 outliers among 40 measurements (10.00%)
+  3 (7.50%) high mild
+  1 (2.50%) high severe
+Benchmarking star_filter_check_duplication/parallel_throughput
+Benchmarking star_filter_check_duplication/parallel_throughput: Warming up for 3.0000 s
+Benchmarking star_filter_check_duplication/parallel_throughput: Collecting 40 samples in estimated 6.4267 s (1640 iterations)
+Benchmarking star_filter_check_duplication/parallel_throughput: Analyzing
+star_filter_check_duplication/parallel_throughput
+                        time:   [2.2667 ms 3.7936 ms 7.3705 ms]
+                        thrpt:  [1.1115 Melem/s 2.1594 Melem/s 3.6140 Melem/s]
+                 change:
+                        time:   [-58.904% -0.7341% +138.74%] (p = 0.86 > 0.05)
+                        thrpt:  [-58.113% +0.7395% +143.33%]
+                        No change in performance detected.
+Found 1 outliers among 40 measurements (2.50%)
+  1 (2.50%) high severe
+
+     Running benches/storage.rs (target/release/deps/storage-cc543fdf4aa53564)
+Gnuplot not found, using plotters backend
+
+DashMap<[u8; 32], ()> live allocated bytes
+     entries     capacity      alloc_delta    bytes/entry
+       21800        28672          1082496          49.66
+
+     Running benches/tls.rs (target/release/deps/tls-d55792acdddaee21)
+Gnuplot not found, using plotters backend
+Benchmarking pure_tls_server_side_latency/server_side_tls_handshake
+Benchmarking pure_tls_server_side_latency/server_side_tls_handshake: Warming up for 3.0000 s
+Benchmarking pure_tls_server_side_latency/server_side_tls_handshake: Collecting 40 samples in estimated 7.5838 s (3280 iterations)
+Benchmarking pure_tls_server_side_latency/server_side_tls_handshake: Analyzing
+pure_tls_server_side_latency/server_side_tls_handshake
+                        time:   [3.3345 ms 3.8369 ms 4.2610 ms]
+                        thrpt:  [234.69  elem/s 260.63  elem/s 299.89  elem/s]
+                 change:
+                        time:   [-18.012% -2.8823% +16.371%] (p = 0.75 > 0.05)
+                        thrpt:  [-14.068% +2.9679% +21.969%]
+                        No change in performance detected.
+
+     Running unittests src/lib.rs (target/release/deps/star_attestation-e5b9a25e0785ef9c)
+
+running 4 tests
+test tests::tests::policy_and_quote_round_trip ... ignored
+test tests::tests::policy_rejects_wrong_mrenclave ... ignored
+test tests::tests::raw_quote_evidence_round_trips ... ignored
+test tests::tests::verifies_public_key_policy ... ignored
+
+test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/release/deps/star_tools-7111c0ce00c8d0ea)
+
+running 6 tests
+test tests::tests::extracts_base64_quote_from_startup_log_line ... ignored
+test tests::tests::extracts_padded_base64_quote_from_startup_log_line ... ignored
+test tests::tests::hex_round_trips_and_accepts_separators ... ignored
+test tests::tests::names_dcap_statuses ... ignored
+test tests::tests::parses_quote_report_fields ... ignored
+test tests::tests::policy_rejects_untrusted_debug_quote ... ignored
+
+test result: ok. 0 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/star_tools-6ba8a1742d422bd5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+== Start With Attestation ==
+star_app pid: 516976
+STAR_ATTESTATION_PUBLIC_KEY_BASE64=<base64 omitted>
+STAR_ATTESTATION_QUOTE_BASE64=<base64 omitted>
+STAR_KEY_MANAGER_QUOTE_BASE64=<base64 omitted>
+STAR_FILTER_ENCLAVE_TRANSFER_QUOTE_BASE64=<base64 omitted>
+STAR_ISSUE_ENCLAVE_TRANSFER_QUOTE_BASE64=<base64 omitted>
+STAR_FILTER_ENCLAVE_DCAP_EVIDENCE_FOR_KEY_MANAGER_BASE64=<base64 omitted>
+STAR_ISSUE_ENCLAVE_DCAP_EVIDENCE_FOR_KEY_MANAGER_BASE64=<base64 omitted>
+STAR_KEY_MANAGER_DCAP_EVIDENCE_FOR_FILTER_ENCLAVE_BASE64=<base64 omitted>
+STAR_KEY_MANAGER_DCAP_EVIDENCE_FOR_ISSUE_ENCLAVE_BASE64=<base64 omitted>
+warning: /home/anonymous2/star/core/Cargo.toml: file `/home/anonymous2/star/core/benches/comm.rs` found to be present in multiple build targets:
+  * `bin` target `comm`
+  * `bench` target `comm`
+    Finished `release` profile [optimized] target(s) in 0.73s
+     Running `target/release/star_tools inspect`
+
+== README Inspect A Quote ==
++ cargo run --manifest-path tools/verifier/Cargo.toml --release -- inspect < /home/anonymous2/star/system/serv/integration/logs/star-app-attest-20260527-070919.log
+quote size: 4600 bytes
+public key: c7c754810c90f186904c1ccdd598ea50cd94c6b05cb841559074560edf2bc02f
+mrenclave: d85d625aa5e44955d34131236583457e366e52451f7bac9acfde297552ec324a
+mrsigner : 9affcfae47b848ec2caf1c49b4b283531e1cc425f93582b36806e52a43d78d1a
+debug    : true
+warning: /home/anonymous2/star/core/Cargo.toml: file `/home/anonymous2/star/core/benches/comm.rs` found to be present in multiple build targets:
+  * `bin` target `comm`
+  * `bench` target `comm`
+    Finished `release` profile [optimized] target(s) in 0.42s
+     Running `target/release/star_tools verify --mrsigner 9affcfae47b848ec2caf1c49b4b283531e1cc425f93582b36806e52a43d78d1a --mrenclave d85d625aa5e44955d34131236583457e366e52451f7bac9acfde297552ec324a --public-key c7c754810c90f186904c1ccdd598ea50cd94c6b05cb841559074560edf2bc02f --allow-debug --allow-advisory --pccs-url 'https://pccs.phala.network'`
+
+== README Verify A Quote ==
++ cargo run --manifest-path tools/verifier/Cargo.toml --release -- verify --mrsigner 9affcfae47b848ec2caf1c49b4b283531e1cc425f93582b36806e52a43d78d1a --mrenclave d85d625aa5e44955d34131236583457e366e52451f7bac9acfde297552ec324a --public-key c7c754810c90f186904c1ccdd598ea50cd94c6b05cb841559074560edf2bc02f --allow-debug --allow-advisory --pccs-url https://pccs.phala.network < /home/anonymous2/star/system/serv/integration/logs/star-app-attest-20260527-070919.log
+quote size: 4600 bytes
+public key: c7c754810c90f186904c1ccdd598ea50cd94c6b05cb841559074560edf2bc02f
+mrenclave: d85d625aa5e44955d34131236583457e366e52451f7bac9acfde297552ec324a
+mrsigner : 9affcfae47b848ec2caf1c49b4b283531e1cc425f93582b36806e52a43d78d1a
+debug    : true
+DCAP quote verification advisory accepted: OutOfDate
+advisory IDs: INTEL-DOC-10000,INTEL-DOC-10001,INTEL-SA-00609
+report_data public key binding OK
+local policy OK
+
+== Done ==
+main log: /home/anonymous2/star/system/serv/integration/logs/integration-20260527-070919.log
+app log: /home/anonymous2/star/system/serv/integration/logs/star-app-attest-20260527-070919.log
+key-manager log: /home/anonymous2/star/system/serv/integration/logs/key-manager-20260527-070919.log
+inspect log: /home/anonymous2/star/system/serv/integration/logs/inspect-20260527-070919.log
+verify log: /home/anonymous2/star/system/serv/integration/logs/verify-20260527-070919.log

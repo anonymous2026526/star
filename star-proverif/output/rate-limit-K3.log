@@ -1,0 +1,656 @@
+nixos@nixos ~/Documents-Linux/star-proverif bench/rate-limit-v0.0 nix-shell
+nixos@nixos ~/Documents-Linux/star-proverif bench/rate-limit-v0.0.1 @ nix-shell
+
+[nix-shell:~/Documents-Linux/star-proverif]$ make rate_limiting
+proverif -lib ./protocol/core.pvl -lib ./protocol/server.pvl -lib ./protocol/honest_server.pvl -lib ./protocol/user.pvl  ./rate-limitability.pv
+File "./protocol/core.pvl", line 50, characters 7-12:
+Warning: identifier cipher rebound.
+File "./protocol/core.pvl", line 54, characters 17-21:
+Warning: identifier nonce rebound.
+File "./protocol/core.pvl", line 64, characters 7-12:
+Warning: identifier cipher rebound.
+File "./protocol/user.pvl", line 5, characters 7-12:
+Warning: identifier cipher rebound.
+File "./rate-limitability.pv", line 31, characters 16-22:
+Warning: identifier authReq rebound.
+File "./rate-limitability.pv", line 36, characters 16-22:
+Warning: identifier authReq rebound.
+File "./rate-limitability.pv", line 41, characters 16-22:
+Warning: identifier authReq rebound.
+Process 0 (that is, the initial process):
+{1}new skAuth: key;
+{2}let pkAuth: pkey = pk(skAuth) in
+(
+    {3}let sk: key = skAuth in
+    (
+        {4}!
+        {5}in(reg_net, regReq: bitstring);
+        {6}let RegisterRequest(id: identity,cipherIn: cipher) = regReq in
+        {44}get registered(=id) in
+        (
+            {7}let cipherIn_1: cipher = fail_cipher in
+            {8}let v: cipher = cipherIn_1 in
+            {9}let v_1: bool = success?(1-proj-Cipher(v)) in
+            {10}let nonce_1: nonce = (if v_1 then 2-proj-Cipher(v) else caught-fail) in
+            {11}let c: bitstring = (if v_1 then 1-proj-Cipher(v) else caught-fail) in
+            {12}let plain: bitstring = (if v_1 then catch-fail(adec_internal(c,nonce_1,sk)) else caught-fail) in
+            {13}let v_2: bool = not-caught-fail(plain) in
+            {14}let ck: bitstring = (if v_1 then (if v_2 then plain else fail-any_type) else fail-any_type) in
+            {15}new uid: bitstring;
+            {16}let code: bitstring = mac(uid,sk) in
+            {17}let cred: bitstring = Credential(code,uid) in
+            {18}new n: nonce;
+            {19}let c_1: bitstring = senc_internal(cred,n,ck) in
+            {20}let cipher_1: cipher = Cipher(c_1,n) in
+            {21}let cipherOut: cipher = cipher_1 in
+            {22}event user_registered(uid);
+            {23}let cipherOut_1: cipher = cipherOut in
+            {24}out(reg_net, cipherOut_1)
+        )
+        else
+            {25}insert registered(id);
+            {26}let cipherIn_2: cipher = cipherIn in
+            {27}let v_3: cipher = cipherIn_2 in
+            {28}let v_4: bool = success?(1-proj-Cipher(v_3)) in
+            {29}let nonce_2: nonce = (if v_4 then 2-proj-Cipher(v_3) else caught-fail) in
+            {30}let c_2: bitstring = (if v_4 then 1-proj-Cipher(v_3) else caught-fail) in
+            {31}let plain_1: bitstring = (if v_4 then catch-fail(adec_internal(c_2,nonce_2,sk)) else caught-fail) in
+            {32}let v_5: bool = not-caught-fail(plain_1) in
+            {33}let ck_1: bitstring = (if v_4 then (if v_5 then plain_1 else fail-any_type) else fail-any_type) in
+            {34}new uid_1: bitstring;
+            {35}let code_1: bitstring = mac(uid_1,sk) in
+            {36}let cred_1: bitstring = Credential(code_1,uid_1) in
+            {37}new n_1: nonce;
+            {38}let c_3: bitstring = senc_internal(cred_1,n_1,ck_1) in
+            {39}let cipher_2: cipher = Cipher(c_3,n_1) in
+            {40}let cipherOut_2: cipher = cipher_2 in
+            {41}event user_registered(uid_1);
+            {42}let cipherOut_3: cipher = cipherOut_2 in
+            {43}out(reg_net, cipherOut_3)
+    ) | (
+        {45}!
+        {46}in(auth_net, authReq: cipher);
+        {47}let t: period = today in
+        {48}let v_6: cipher = authReq in
+        {49}let v_7: bool = success?(1-proj-Cipher(v_6)) in
+        {50}let nonce_3: nonce = (if v_7 then 2-proj-Cipher(v_6) else caught-fail) in
+        {51}let c_4: bitstring = (if v_7 then 1-proj-Cipher(v_6) else caught-fail) in
+        {52}let plain_2: bitstring = (if v_7 then catch-fail(adec_internal(c_4,nonce_3,sk)) else caught-fail) in
+        {53}let v_8: bool = not-caught-fail(plain_2) in
+        {54}let payload: bitstring = (if v_7 then (if v_8 then plain_2 else fail-any_type) else fail-any_type) in
+        {55}let AuthRequestPlain(=t,cnt: counter,cred_2: bitstring) = payload in
+        {56}let Credential(code_2: bitstring,uid_2: bitstring) = cred_2 in
+        {57}if ((code_2 = mac(uid_2,sk)) && ((cnt = c0) || ((cnt = c1) || (cnt = c2)))) then
+        {58}let prfK: key = prfKey(cnt,uid_2) in
+        {59}let prfT: bitstring = prfTag(t) in
+        {60}let h: bitstring = prf(prfT,prfK) in
+        {61}let nym: bitstring = h in
+        {62}event user_authenticated(uid_2);
+        {63}let v_9: bitstring = (nym,uid_2) in
+        {64}let v_10: bool = success?(1-proj-2-tuple(v_9)) in
+        {65}let ignored_v: bitstring = (if v_10 then 2-proj-2-tuple(v_9) else caught-fail) in
+        {66}let nym_1: bitstring = (if v_10 then 1-proj-2-tuple(v_9) else caught-fail) in
+        {67}let h_1: bitstring = (if v_10 then nym_1 else fail-any_type) in
+        {68}event checkpoint
+    ) | (
+        {69}!
+        {70}in(auth_net, authReq_1: cipher);
+        {71}let t_1: period = today in
+        {72}let v_11: cipher = authReq_1 in
+        {73}let v_12: bool = success?(1-proj-Cipher(v_11)) in
+        {74}let nonce_4: nonce = (if v_12 then 2-proj-Cipher(v_11) else caught-fail) in
+        {75}let c_5: bitstring = (if v_12 then 1-proj-Cipher(v_11) else caught-fail) in
+        {76}let plain_3: bitstring = (if v_12 then catch-fail(adec_internal(c_5,nonce_4,sk)) else caught-fail) in
+        {77}let v_13: bool = not-caught-fail(plain_3) in
+        {78}let payload_1: bitstring = (if v_12 then (if v_13 then plain_3 else fail-any_type) else fail-any_type) in
+        {79}let AuthRequestPlain(=t_1,cnt_1: counter,cred_3: bitstring) = payload_1 in
+        {80}let Credential(code_3: bitstring,uid_3: bitstring) = cred_3 in
+        {81}if ((code_3 = mac(uid_3,sk)) && ((cnt_1 = c0) || ((cnt_1 = c1) || (cnt_1 = c2)))) then
+        {82}let prfK_1: key = prfKey(cnt_1,uid_3) in
+        {83}let prfT_1: bitstring = prfTag(t_1) in
+        {84}let h_2: bitstring = prf(prfT_1,prfK_1) in
+        {85}let nym_2: bitstring = h_2 in
+        {86}event user_authenticated(uid_3);
+        {87}let (h0: bitstring,uid_4: bitstring) = (nym_2,uid_3) in
+        {88}let r1: bitstring = null in
+        {89}let r2: bitstring = null in
+        {90}let r3: bitstring = null in
+        {91}let r4: bitstring = null in
+        {92}let a: nat = catch-fail((if ((r1 ≠ h0) && (r2 ≠ h0)) then 0 else fail-any_type)) in
+        {93}let v_14: bool = not-caught-fail(a) in
+        {94}let b: nat = (if v_14 then catch-fail((if ((r3 ≠ h0) && (r4 ≠ h0)) then 0 else fail-any_type)) else caught-fail) in
+        {95}let v_15: bool = not-caught-fail(b) in
+        {96}let ignored_v_1: nat = (if v_14 then (if v_15 then 0 else fail-any_type) else fail-any_type) in
+        {97}event access_count(c0);
+        {98}in(auth_net, authReq_2: cipher);
+        {99}let t_2: period = today in
+        {100}let v_16: cipher = authReq_2 in
+        {101}let v_17: bool = success?(1-proj-Cipher(v_16)) in
+        {102}let nonce_5: nonce = (if v_17 then 2-proj-Cipher(v_16) else caught-fail) in
+        {103}let c_6: bitstring = (if v_17 then 1-proj-Cipher(v_16) else caught-fail) in
+        {104}let plain_4: bitstring = (if v_17 then catch-fail(adec_internal(c_6,nonce_5,sk)) else caught-fail) in
+        {105}let v_18: bool = not-caught-fail(plain_4) in
+        {106}let payload_2: bitstring = (if v_17 then (if v_18 then plain_4 else fail-any_type) else fail-any_type) in
+        {107}let AuthRequestPlain(=t_2,cnt_2: counter,cred_4: bitstring) = payload_2 in
+        {108}let Credential(code_4: bitstring,uid_5: bitstring) = cred_4 in
+        {109}if ((code_4 = mac(uid_5,sk)) && ((cnt_2 = c0) || ((cnt_2 = c1) || (cnt_2 = c2)))) then
+        {110}let prfK_2: key = prfKey(cnt_2,uid_5) in
+        {111}let prfT_2: bitstring = prfTag(t_2) in
+        {112}let h_3: bitstring = prf(prfT_2,prfK_2) in
+        {113}let nym_3: bitstring = h_3 in
+        {114}event user_authenticated(uid_5);
+        {115}let (h1: bitstring,=uid_4) = (nym_3,uid_5) in
+        {116}let r1_1: bitstring = null in
+        {117}let r2_1: bitstring = null in
+        {118}let r3_1: bitstring = null in
+        {119}let a_1: nat = catch-fail((if ((r1_1 ≠ h1) && (r2_1 ≠ h1)) then 0 else fail-any_type)) in
+        {120}let v_19: bool = not-caught-fail(a_1) in
+        {121}let b_1: nat = (if v_19 then catch-fail((if ((r3_1 ≠ h1) && (h0 ≠ h1)) then 0 else fail-any_type)) else caught-fail) in
+        {122}let v_20: bool = not-caught-fail(b_1) in
+        {123}let ignored_v_2: nat = (if v_19 then (if v_20 then 0 else fail-any_type) else fail-any_type) in
+        {124}event access_count(c1);
+        {125}in(auth_net, authReq_3: cipher);
+        {126}let t_3: period = today in
+        {127}let v_21: cipher = authReq_3 in
+        {128}let v_22: bool = success?(1-proj-Cipher(v_21)) in
+        {129}let nonce_6: nonce = (if v_22 then 2-proj-Cipher(v_21) else caught-fail) in
+        {130}let c_7: bitstring = (if v_22 then 1-proj-Cipher(v_21) else caught-fail) in
+        {131}let plain_5: bitstring = (if v_22 then catch-fail(adec_internal(c_7,nonce_6,sk)) else caught-fail) in
+        {132}let v_23: bool = not-caught-fail(plain_5) in
+        {133}let payload_3: bitstring = (if v_22 then (if v_23 then plain_5 else fail-any_type) else fail-any_type) in
+        {134}let AuthRequestPlain(=t_3,cnt_3: counter,cred_5: bitstring) = payload_3 in
+        {135}let Credential(code_5: bitstring,uid_6: bitstring) = cred_5 in
+        {136}if ((code_5 = mac(uid_6,sk)) && ((cnt_3 = c0) || ((cnt_3 = c1) || (cnt_3 = c2)))) then
+        {137}let prfK_3: key = prfKey(cnt_3,uid_6) in
+        {138}let prfT_3: bitstring = prfTag(t_3) in
+        {139}let h_4: bitstring = prf(prfT_3,prfK_3) in
+        {140}let nym_4: bitstring = h_4 in
+        {141}event user_authenticated(uid_6);
+        {142}let (h2: bitstring,=uid_4) = (nym_4,uid_6) in
+        {143}let r1_2: bitstring = null in
+        {144}let r2_2: bitstring = null in
+        {145}let a_2: nat = catch-fail((if ((r1_2 ≠ h2) && (r2_2 ≠ h2)) then 0 else fail-any_type)) in
+        {146}let v_24: bool = not-caught-fail(a_2) in
+        {147}let b_2: nat = (if v_24 then catch-fail((if ((h0 ≠ h2) && (h1 ≠ h2)) then 0 else fail-any_type)) else caught-fail) in
+        {148}let v_25: bool = not-caught-fail(b_2) in
+        {149}let ignored_v_3: nat = (if v_24 then (if v_25 then 0 else fail-any_type) else fail-any_type) in
+        {150}event access_count(c2);
+        {151}in(auth_net, authReq_4: cipher);
+        {152}let t_4: period = today in
+        {153}let v_26: cipher = authReq_4 in
+        {154}let v_27: bool = success?(1-proj-Cipher(v_26)) in
+        {155}let nonce_7: nonce = (if v_27 then 2-proj-Cipher(v_26) else caught-fail) in
+        {156}let c_8: bitstring = (if v_27 then 1-proj-Cipher(v_26) else caught-fail) in
+        {157}let plain_6: bitstring = (if v_27 then catch-fail(adec_internal(c_8,nonce_7,sk)) else caught-fail) in
+        {158}let v_28: bool = not-caught-fail(plain_6) in
+        {159}let payload_4: bitstring = (if v_27 then (if v_28 then plain_6 else fail-any_type) else fail-any_type) in
+        {160}let AuthRequestPlain(=t_4,cnt_4: counter,cred_6: bitstring) = payload_4 in
+        {161}let Credential(code_6: bitstring,uid_7: bitstring) = cred_6 in
+        {162}if ((code_6 = mac(uid_7,sk)) && ((cnt_4 = c0) || ((cnt_4 = c1) || (cnt_4 = c2)))) then
+        {163}let prfK_4: key = prfKey(cnt_4,uid_7) in
+        {164}let prfT_4: bitstring = prfTag(t_4) in
+        {165}let h_5: bitstring = prf(prfT_4,prfK_4) in
+        {166}let nym_5: bitstring = h_5 in
+        {167}event user_authenticated(uid_7);
+        {168}let (h3: bitstring,=uid_4) = (nym_5,uid_7) in
+        {169}let r1_3: bitstring = null in
+        {170}let a_3: nat = catch-fail((if ((r1_3 ≠ h3) && (h0 ≠ h3)) then 0 else fail-any_type)) in
+        {171}let v_29: bool = not-caught-fail(a_3) in
+        {172}let b_3: nat = (if v_29 then catch-fail((if ((h1 ≠ h3) && (h2 ≠ h3)) then 0 else fail-any_type)) else caught-fail) in
+        {173}let v_30: bool = not-caught-fail(b_3) in
+        {174}let ignored_v_4: nat = (if v_29 then (if v_30 then 0 else fail-any_type) else fail-any_type) in
+        {175}event access_count(c3)
+    )
+) | (
+    {176}!
+    {177}new id_1: identity;
+    {178}let id_2: identity = id_1 in
+    {179}new ck_2: bitstring;
+    {180}let plain_7: bitstring = ck_2 in
+    {181}new n_2: nonce;
+    {182}let c_9: bitstring = aenc_internal(plain_7,n_2,pkAuth) in
+    {183}let cipher_3: cipher = Cipher(c_9,n_2) in
+    {184}let cipher1: cipher = cipher_3 in
+    {185}let request: bitstring = RegisterRequest(id_2,cipher1) in
+    {186}let (ck_3: bitstring,request_1: bitstring) = (ck_2,request) in
+    {187}out(reg_net, request_1);
+    {188}in(reg_net, regResp: cipher);
+    {189}let v_31: cipher = regResp in
+    {190}let v_32: bool = success?(1-proj-Cipher(v_31)) in
+    {191}let n_3: nonce = (if v_32 then 2-proj-Cipher(v_31) else caught-fail) in
+    {192}let c_10: bitstring = (if v_32 then 1-proj-Cipher(v_31) else caught-fail) in
+    {193}let plain_8: bitstring = (if v_32 then catch-fail(sdec_internal(c_10,n_3,ck_3)) else caught-fail) in
+    {194}let v_33: bool = not-caught-fail(plain_8) in
+    {195}let cred_7: bitstring = catch-fail((if v_32 then (if v_33 then plain_8 else fail-any_type) else fail-any_type)) in
+    {196}let v_34: bool = not-caught-fail(cred_7) in
+    {197}let cred_8: bitstring = (if v_34 then cred_7 else fail-any_type) in
+    {198}out(user_secure, (id_2,cred_8,c0))
+) | (
+    {199}!
+    {200}in(user_secure, (id_3: identity,cred_9: bitstring,cnt_5: counter));
+    {201}let t_5: period = today in
+    {202}let authPayload: bitstring = AuthRequestPlain(t_5,cnt_5,cred_9) in
+    {203}new n_4: nonce;
+    {204}let c_11: bitstring = aenc_internal(authPayload,n_4,pkAuth) in
+    {205}let cipher_4: cipher = Cipher(c_11,n_4) in
+    {206}let cipher_5: cipher = cipher_4 in
+    {207}let Credential(code_7: bitstring,uid_8: bitstring) = cred_9 in
+    {208}event user_authenticating(uid_8);
+    {209}let authCipher: cipher = cipher_5 in
+    (
+        {210}out(auth_net, authCipher)
+    ) | (
+        {211}let next: counter = counter_next(cnt_5) in
+        {212}out(user_secure, (id_3,cred_9,next))
+    )
+)
+
+--  Process 1 (that is, process 0, with let moved downwards):
+{1}new skAuth: key;
+(
+    {3}let sk: key = skAuth in
+    (
+        {4}!
+        {5}in(reg_net, regReq: bitstring);
+        {6}let RegisterRequest(id: identity,cipherIn: cipher) = regReq in
+        {44}get registered(=id) in
+        (
+            {7}let cipherIn_1: cipher = fail_cipher in
+            {8}let v: cipher = cipherIn_1 in
+            {9}let v_1: bool = success?(1-proj-Cipher(v)) in
+            {10}let nonce_1: nonce = (if v_1 then 2-proj-Cipher(v) else caught-fail) in
+            {11}let c: bitstring = (if v_1 then 1-proj-Cipher(v) else caught-fail) in
+            {12}let plain: bitstring = (if v_1 then catch-fail(adec_internal(c,nonce_1,sk)) else caught-fail) in
+            {13}let v_2: bool = not-caught-fail(plain) in
+            {14}let ck: bitstring = (if v_1 then (if v_2 then plain else fail-any_type) else fail-any_type) in
+            {15}new uid: bitstring;
+            {18}new n: nonce;
+            {22}event user_registered(uid);
+            {16}let code: bitstring = mac(uid,sk) in
+            {17}let cred: bitstring = Credential(code,uid) in
+            {19}let c_1: bitstring = senc_internal(cred,n,ck) in
+            {20}let cipher_1: cipher = Cipher(c_1,n) in
+            {21}let cipherOut: cipher = cipher_1 in
+            {23}let cipherOut_1: cipher = cipherOut in
+            {24}out(reg_net, cipherOut_1)
+        )
+        else
+            {25}insert registered(id);
+            {26}let cipherIn_2: cipher = cipherIn in
+            {27}let v_3: cipher = cipherIn_2 in
+            {28}let v_4: bool = success?(1-proj-Cipher(v_3)) in
+            {29}let nonce_2: nonce = (if v_4 then 2-proj-Cipher(v_3) else caught-fail) in
+            {30}let c_2: bitstring = (if v_4 then 1-proj-Cipher(v_3) else caught-fail) in
+            {31}let plain_1: bitstring = (if v_4 then catch-fail(adec_internal(c_2,nonce_2,sk)) else caught-fail) in
+            {32}let v_5: bool = not-caught-fail(plain_1) in
+            {33}let ck_1: bitstring = (if v_4 then (if v_5 then plain_1 else fail-any_type) else fail-any_type) in
+            {34}new uid_1: bitstring;
+            {37}new n_1: nonce;
+            {41}event user_registered(uid_1);
+            {35}let code_1: bitstring = mac(uid_1,sk) in
+            {36}let cred_1: bitstring = Credential(code_1,uid_1) in
+            {38}let c_3: bitstring = senc_internal(cred_1,n_1,ck_1) in
+            {39}let cipher_2: cipher = Cipher(c_3,n_1) in
+            {40}let cipherOut_2: cipher = cipher_2 in
+            {42}let cipherOut_3: cipher = cipherOut_2 in
+            {43}out(reg_net, cipherOut_3)
+    ) | (
+        {45}!
+        {46}in(auth_net, authReq: cipher);
+        {48}let v_6: cipher = authReq in
+        {49}let v_7: bool = success?(1-proj-Cipher(v_6)) in
+        {50}let nonce_3: nonce = (if v_7 then 2-proj-Cipher(v_6) else caught-fail) in
+        {51}let c_4: bitstring = (if v_7 then 1-proj-Cipher(v_6) else caught-fail) in
+        {52}let plain_2: bitstring = (if v_7 then catch-fail(adec_internal(c_4,nonce_3,sk)) else caught-fail) in
+        {53}let v_8: bool = not-caught-fail(plain_2) in
+        {54}let payload: bitstring = (if v_7 then (if v_8 then plain_2 else fail-any_type) else fail-any_type) in
+        {47}let t: period = today in
+        {55}let AuthRequestPlain(=t,cnt: counter,cred_2: bitstring) = payload in
+        {56}let Credential(code_2: bitstring,uid_2: bitstring) = cred_2 in
+        {57}if ((code_2 = mac(uid_2,sk)) && ((cnt = c0) || ((cnt = c1) || (cnt = c2)))) then
+        {62}event user_authenticated(uid_2);
+        {59}let prfT: bitstring = prfTag(t) in
+        {58}let prfK: key = prfKey(cnt,uid_2) in
+        {60}let h: bitstring = prf(prfT,prfK) in
+        {61}let nym: bitstring = h in
+        {63}let v_9: bitstring = (nym,uid_2) in
+        {64}let v_10: bool = success?(1-proj-2-tuple(v_9)) in
+        {65}let ignored_v: bitstring = (if v_10 then 2-proj-2-tuple(v_9) else caught-fail) in
+        {66}let nym_1: bitstring = (if v_10 then 1-proj-2-tuple(v_9) else caught-fail) in
+        {67}let h_1: bitstring = (if v_10 then nym_1 else fail-any_type) in
+        {68}event checkpoint
+    ) | (
+        {69}!
+        {70}in(auth_net, authReq_1: cipher);
+        {72}let v_11: cipher = authReq_1 in
+        {73}let v_12: bool = success?(1-proj-Cipher(v_11)) in
+        {74}let nonce_4: nonce = (if v_12 then 2-proj-Cipher(v_11) else caught-fail) in
+        {75}let c_5: bitstring = (if v_12 then 1-proj-Cipher(v_11) else caught-fail) in
+        {76}let plain_3: bitstring = (if v_12 then catch-fail(adec_internal(c_5,nonce_4,sk)) else caught-fail) in
+        {77}let v_13: bool = not-caught-fail(plain_3) in
+        {78}let payload_1: bitstring = (if v_12 then (if v_13 then plain_3 else fail-any_type) else fail-any_type) in
+        {71}let t_1: period = today in
+        {79}let AuthRequestPlain(=t_1,cnt_1: counter,cred_3: bitstring) = payload_1 in
+        {80}let Credential(code_3: bitstring,uid_3: bitstring) = cred_3 in
+        {81}if ((code_3 = mac(uid_3,sk)) && ((cnt_1 = c0) || ((cnt_1 = c1) || (cnt_1 = c2)))) then
+        {86}event user_authenticated(uid_3);
+        {83}let prfT_1: bitstring = prfTag(t_1) in
+        {82}let prfK_1: key = prfKey(cnt_1,uid_3) in
+        {84}let h_2: bitstring = prf(prfT_1,prfK_1) in
+        {85}let nym_2: bitstring = h_2 in
+        {87}let (h0: bitstring,uid_4: bitstring) = (nym_2,uid_3) in
+        {89}let r2: bitstring = null in
+        {88}let r1: bitstring = null in
+        {92}let a: nat = catch-fail((if ((r1 ≠ h0) && (r2 ≠ h0)) then 0 else fail-any_type)) in
+        {93}let v_14: bool = not-caught-fail(a) in
+        {91}let r4: bitstring = null in
+        {90}let r3: bitstring = null in
+        {94}let b: nat = (if v_14 then catch-fail((if ((r3 ≠ h0) && (r4 ≠ h0)) then 0 else fail-any_type)) else caught-fail) in
+        {95}let v_15: bool = not-caught-fail(b) in
+        {96}let ignored_v_1: nat = (if v_14 then (if v_15 then 0 else fail-any_type) else fail-any_type) in
+        {97}event access_count(c0);
+        {98}in(auth_net, authReq_2: cipher);
+        {100}let v_16: cipher = authReq_2 in
+        {101}let v_17: bool = success?(1-proj-Cipher(v_16)) in
+        {102}let nonce_5: nonce = (if v_17 then 2-proj-Cipher(v_16) else caught-fail) in
+        {103}let c_6: bitstring = (if v_17 then 1-proj-Cipher(v_16) else caught-fail) in
+        {104}let plain_4: bitstring = (if v_17 then catch-fail(adec_internal(c_6,nonce_5,sk)) else caught-fail) in
+        {105}let v_18: bool = not-caught-fail(plain_4) in
+        {106}let payload_2: bitstring = (if v_17 then (if v_18 then plain_4 else fail-any_type) else fail-any_type) in
+        {99}let t_2: period = today in
+        {107}let AuthRequestPlain(=t_2,cnt_2: counter,cred_4: bitstring) = payload_2 in
+        {108}let Credential(code_4: bitstring,uid_5: bitstring) = cred_4 in
+        {109}if ((code_4 = mac(uid_5,sk)) && ((cnt_2 = c0) || ((cnt_2 = c1) || (cnt_2 = c2)))) then
+        {114}event user_authenticated(uid_5);
+        {111}let prfT_2: bitstring = prfTag(t_2) in
+        {110}let prfK_2: key = prfKey(cnt_2,uid_5) in
+        {112}let h_3: bitstring = prf(prfT_2,prfK_2) in
+        {113}let nym_3: bitstring = h_3 in
+        {115}let (h1: bitstring,=uid_4) = (nym_3,uid_5) in
+        {117}let r2_1: bitstring = null in
+        {116}let r1_1: bitstring = null in
+        {119}let a_1: nat = catch-fail((if ((r1_1 ≠ h1) && (r2_1 ≠ h1)) then 0 else fail-any_type)) in
+        {120}let v_19: bool = not-caught-fail(a_1) in
+        {118}let r3_1: bitstring = null in
+        {121}let b_1: nat = (if v_19 then catch-fail((if ((r3_1 ≠ h1) && (h0 ≠ h1)) then 0 else fail-any_type)) else caught-fail) in
+        {122}let v_20: bool = not-caught-fail(b_1) in
+        {123}let ignored_v_2: nat = (if v_19 then (if v_20 then 0 else fail-any_type) else fail-any_type) in
+        {124}event access_count(c1);
+        {125}in(auth_net, authReq_3: cipher);
+        {127}let v_21: cipher = authReq_3 in
+        {128}let v_22: bool = success?(1-proj-Cipher(v_21)) in
+        {129}let nonce_6: nonce = (if v_22 then 2-proj-Cipher(v_21) else caught-fail) in
+        {130}let c_7: bitstring = (if v_22 then 1-proj-Cipher(v_21) else caught-fail) in
+        {131}let plain_5: bitstring = (if v_22 then catch-fail(adec_internal(c_7,nonce_6,sk)) else caught-fail) in
+        {132}let v_23: bool = not-caught-fail(plain_5) in
+        {133}let payload_3: bitstring = (if v_22 then (if v_23 then plain_5 else fail-any_type) else fail-any_type) in
+        {126}let t_3: period = today in
+        {134}let AuthRequestPlain(=t_3,cnt_3: counter,cred_5: bitstring) = payload_3 in
+        {135}let Credential(code_5: bitstring,uid_6: bitstring) = cred_5 in
+        {136}if ((code_5 = mac(uid_6,sk)) && ((cnt_3 = c0) || ((cnt_3 = c1) || (cnt_3 = c2)))) then
+        {141}event user_authenticated(uid_6);
+        {138}let prfT_3: bitstring = prfTag(t_3) in
+        {137}let prfK_3: key = prfKey(cnt_3,uid_6) in
+        {139}let h_4: bitstring = prf(prfT_3,prfK_3) in
+        {140}let nym_4: bitstring = h_4 in
+        {142}let (h2: bitstring,=uid_4) = (nym_4,uid_6) in
+        {144}let r2_2: bitstring = null in
+        {143}let r1_2: bitstring = null in
+        {145}let a_2: nat = catch-fail((if ((r1_2 ≠ h2) && (r2_2 ≠ h2)) then 0 else fail-any_type)) in
+        {146}let v_24: bool = not-caught-fail(a_2) in
+        {147}let b_2: nat = (if v_24 then catch-fail((if ((h0 ≠ h2) && (h1 ≠ h2)) then 0 else fail-any_type)) else caught-fail) in
+        {148}let v_25: bool = not-caught-fail(b_2) in
+        {149}let ignored_v_3: nat = (if v_24 then (if v_25 then 0 else fail-any_type) else fail-any_type) in
+        {150}event access_count(c2);
+        {151}in(auth_net, authReq_4: cipher);
+        {153}let v_26: cipher = authReq_4 in
+        {154}let v_27: bool = success?(1-proj-Cipher(v_26)) in
+        {155}let nonce_7: nonce = (if v_27 then 2-proj-Cipher(v_26) else caught-fail) in
+        {156}let c_8: bitstring = (if v_27 then 1-proj-Cipher(v_26) else caught-fail) in
+        {157}let plain_6: bitstring = (if v_27 then catch-fail(adec_internal(c_8,nonce_7,sk)) else caught-fail) in
+        {158}let v_28: bool = not-caught-fail(plain_6) in
+        {159}let payload_4: bitstring = (if v_27 then (if v_28 then plain_6 else fail-any_type) else fail-any_type) in
+        {152}let t_4: period = today in
+        {160}let AuthRequestPlain(=t_4,cnt_4: counter,cred_6: bitstring) = payload_4 in
+        {161}let Credential(code_6: bitstring,uid_7: bitstring) = cred_6 in
+        {162}if ((code_6 = mac(uid_7,sk)) && ((cnt_4 = c0) || ((cnt_4 = c1) || (cnt_4 = c2)))) then
+        {167}event user_authenticated(uid_7);
+        {164}let prfT_4: bitstring = prfTag(t_4) in
+        {163}let prfK_4: key = prfKey(cnt_4,uid_7) in
+        {165}let h_5: bitstring = prf(prfT_4,prfK_4) in
+        {166}let nym_5: bitstring = h_5 in
+        {168}let (h3: bitstring,=uid_4) = (nym_5,uid_7) in
+        {169}let r1_3: bitstring = null in
+        {170}let a_3: nat = catch-fail((if ((r1_3 ≠ h3) && (h0 ≠ h3)) then 0 else fail-any_type)) in
+        {171}let v_29: bool = not-caught-fail(a_3) in
+        {172}let b_3: nat = (if v_29 then catch-fail((if ((h1 ≠ h3) && (h2 ≠ h3)) then 0 else fail-any_type)) else caught-fail) in
+        {173}let v_30: bool = not-caught-fail(b_3) in
+        {174}let ignored_v_4: nat = (if v_29 then (if v_30 then 0 else fail-any_type) else fail-any_type) in
+        {175}event access_count(c3)
+    )
+) | (
+    {2}let pkAuth: pkey = pk(skAuth) in
+    (
+        {176}!
+        {177}new id_1: identity;
+        {179}new ck_2: bitstring;
+        {181}new n_2: nonce;
+        {180}let plain_7: bitstring = ck_2 in
+        {182}let c_9: bitstring = aenc_internal(plain_7,n_2,pkAuth) in
+        {183}let cipher_3: cipher = Cipher(c_9,n_2) in
+        {184}let cipher1: cipher = cipher_3 in
+        {178}let id_2: identity = id_1 in
+        {185}let request: bitstring = RegisterRequest(id_2,cipher1) in
+        {186}let (ck_3: bitstring,request_1: bitstring) = (ck_2,request) in
+        {187}out(reg_net, request_1);
+        {188}in(reg_net, regResp: cipher);
+        {189}let v_31: cipher = regResp in
+        {190}let v_32: bool = success?(1-proj-Cipher(v_31)) in
+        {191}let n_3: nonce = (if v_32 then 2-proj-Cipher(v_31) else caught-fail) in
+        {192}let c_10: bitstring = (if v_32 then 1-proj-Cipher(v_31) else caught-fail) in
+        {193}let plain_8: bitstring = (if v_32 then catch-fail(sdec_internal(c_10,n_3,ck_3)) else caught-fail) in
+        {194}let v_33: bool = not-caught-fail(plain_8) in
+        {195}let cred_7: bitstring = catch-fail((if v_32 then (if v_33 then plain_8 else fail-any_type) else fail-any_type)) in
+        {196}let v_34: bool = not-caught-fail(cred_7) in
+        {197}let cred_8: bitstring = (if v_34 then cred_7 else fail-any_type) in
+        {198}out(user_secure, (id_2,cred_8,c0))
+    ) | (
+        {199}!
+        {200}in(user_secure, (id_3: identity,cred_9: bitstring,cnt_5: counter));
+        {203}new n_4: nonce;
+        {207}let Credential(code_7: bitstring,uid_8: bitstring) = cred_9 in
+        {208}event user_authenticating(uid_8);
+        (
+            {201}let t_5: period = today in
+            {202}let authPayload: bitstring = AuthRequestPlain(t_5,cnt_5,cred_9) in
+            {204}let c_11: bitstring = aenc_internal(authPayload,n_4,pkAuth) in
+            {205}let cipher_4: cipher = Cipher(c_11,n_4) in
+            {206}let cipher_5: cipher = cipher_4 in
+            {209}let authCipher: cipher = cipher_5 in
+            {210}out(auth_net, authCipher)
+        ) | (
+            {211}let next: counter = counter_next(cnt_5) in
+            {212}out(user_secure, (id_3,cred_9,next))
+        )
+    )
+)
+
+-- Query not event(access_count(c2)) in process 1.
+Translating the process into Horn clauses...
+Completing...
+200 rules inserted. Base: 173 rules (43 with conclusion selected). Queue: 57 rules.
+400 rules inserted. Base: 351 rules (64 with conclusion selected). Queue: 23 rules.
+Starting query not event(access_count(c2))
+goal reachable: b-event(@p_act(@occ125_1,Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_9,skAuth[]),uid_9)),n_5,pk(skAuth[])),n_5))) && b-event(@p_act(@occ98_1,Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_9,skAuth[]),uid_9)),n_6,pk(skAuth[])),n_6))) && b-event(@p_act(@occ5_1,RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_7,pk(skAuth[])),n_7)))) && b-event(@p_act(@occ188_1,Cipher(senc_internal(Credential(mac(uid_9,skAuth[]),uid_9),n_8,ck_4),n_8))) && b-event(@p_act(@occ200_1,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c0))) && b-event(@p_act(@occ200_2,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c1))) && b-event(@p_act(@occ200_3,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c2))) && b-event(@p_act(@occ70_1,Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_9,skAuth[]),uid_9)),n_9,pk(skAuth[])),n_9))) -> event(access_count(c2))
+Abbreviations:
+@occ125_1 = @occ125[!1 = @sid]
+id_4 = id_1[!1 = @sid_1]
+ck_4 = ck_2[!1 = @sid_1]
+n_7 = n_2[!1 = @sid_1]
+uid_9 = uid_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_7,pk(skAuth[])),n_7)),!1 = @sid_2]
+n_5 = n_4[cnt_5 = c0,cred_9 = Credential(mac(uid_9,skAuth[]),uid_9),id_3 = id_4,!1 = @sid_3]
+@occ98_1 = @occ98[!1 = @sid]
+n_6 = n_4[cnt_5 = c1,cred_9 = Credential(mac(uid_9,skAuth[]),uid_9),id_3 = id_4,!1 = @sid_4]
+@occ5_1 = @occ5[!1 = @sid_2]
+@occ188_1 = @occ188[!1 = @sid_1]
+n_8 = n_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_7,pk(skAuth[])),n_7)),!1 = @sid_2]
+@occ200_1 = @occ200[!1 = @sid_3]
+@occ200_2 = @occ200[!1 = @sid_4]
+@occ200_3 = @occ200[!1 = @sid_5]
+@occ70_1 = @occ70[!1 = @sid]
+n_9 = n_4[cnt_5 = c2,cred_9 = Credential(mac(uid_9,skAuth[]),uid_9),id_3 = id_4,!1 = @sid_5]
+
+Derivation:
+Abbreviations:
+id_4 = id_1[!1 = @sid]
+ck_4 = ck_2[!1 = @sid]
+n_5 = n_2[!1 = @sid]
+uid_9 = uid_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)),!1 = @sid_1]
+n_6 = n_4[cnt_5 = c0,cred_9 = Credential(mac(uid_9,skAuth[]),uid_9),id_3 = id_4,!1 = @sid_2]
+@occ200_1 = @occ200[!1 = @sid_2]
+@occ125_1 = @occ125[!1 = @sid_3]
+n_7 = n_4[cnt_5 = c1,cred_9 = Credential(mac(uid_9,skAuth[]),uid_9),id_3 = id_4,!1 = @sid_4]
+@occ200_2 = @occ200[!1 = @sid_4]
+@occ98_1 = @occ98[!1 = @sid_3]
+n_8 = n_4[cnt_5 = c2,cred_9 = Credential(mac(uid_9,skAuth[]),uid_9),id_3 = id_4,!1 = @sid_5]
+n_9 = n_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)),!1 = @sid_1]
+@occ5_1 = @occ5[!1 = @sid_1]
+@occ188_1 = @occ188[!1 = @sid]
+@occ200_3 = @occ200[!1 = @sid_5]
+@occ70_1 = @occ70[!1 = @sid_3]
+
+1. The message RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)) may be sent on channel reg_net[] at output {187}.
+mess(reg_net[],RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5))).
+
+2. The event @p_act(@occ5_1,RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5))) records how variables are instantiated at {5}.
+The message RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)) that may be sent on channel reg_net[] by 1 may be received at input {5}.
+So the message Cipher(senc_internal(Credential(mac(uid_9,skAuth[]),uid_9),n_9,ck_4),n_9) may be sent on channel reg_net[] at output {43}.
+mess(reg_net[],Cipher(senc_internal(Credential(mac(uid_9,skAuth[]),uid_9),n_9,ck_4),n_9)).
+
+3. The event @p_act(@occ188_1,Cipher(senc_internal(Credential(mac(uid_9,skAuth[]),uid_9),n_9,ck_4),n_9)) records how variables are instantiated at {188}.
+The message Cipher(senc_internal(Credential(mac(uid_9,skAuth[]),uid_9),n_9,ck_4),n_9) that may be sent on channel reg_net[] by 2 may be received at input {188}.
+So the message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c0) may be sent on channel user_secure[] at output {198}.
+mess(user_secure[],(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c0)).
+
+4. The event @p_act(@occ200_1,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c0)) records how variables are instantiated at {200}.
+The message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c0) that may be sent on channel user_secure[] by 3 may be received at input {200}.
+So the message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c1) may be sent on channel user_secure[] at output {212}.
+mess(user_secure[],(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c1)).
+
+5. The event @p_act(@occ200_2,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c1)) records how variables are instantiated at {200}.
+The message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c1) that may be sent on channel user_secure[] by 4 may be received at input {200}.
+So the message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c2) may be sent on channel user_secure[] at output {212}.
+mess(user_secure[],(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c2)).
+
+6. The event @p_act(@occ200_3,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c2)) records how variables are instantiated at {200}.
+The message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c2) that may be sent on channel user_secure[] by 5 may be received at input {200}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_9,skAuth[]),uid_9)),n_8,pk(skAuth[])),n_8) may be sent on channel auth_net[] at output {210}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_9,skAuth[]),uid_9)),n_8,pk(skAuth[])),n_8)).
+
+7. The event @p_act(@occ200_2,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c1)) records how variables are instantiated at {200}.
+The message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c1) that may be sent on channel user_secure[] by 4 may be received at input {200}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_9,skAuth[]),uid_9)),n_7,pk(skAuth[])),n_7) may be sent on channel auth_net[] at output {210}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_9,skAuth[]),uid_9)),n_7,pk(skAuth[])),n_7)).
+
+8. The event @p_act(@occ200_1,(id_4,Credential(mac(uid_9,skAuth[]),uid_9),c0)) records how variables are instantiated at {200}.
+The message (id_4,Credential(mac(uid_9,skAuth[]),uid_9),c0) that may be sent on channel user_secure[] by 3 may be received at input {200}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_9,skAuth[]),uid_9)),n_6,pk(skAuth[])),n_6) may be sent on channel auth_net[] at output {210}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_9,skAuth[]),uid_9)),n_6,pk(skAuth[])),n_6)).
+
+9. The event @p_act(@occ70_1,Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_9,skAuth[]),uid_9)),n_8,pk(skAuth[])),n_8)) records how variables are instantiated at {70}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_9,skAuth[]),uid_9)),n_8,pk(skAuth[])),n_8) that may be sent on channel auth_net[] by 6 may be received at input {70}.
+The event @p_act(@occ98_1,Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_9,skAuth[]),uid_9)),n_7,pk(skAuth[])),n_7)) records how variables are instantiated at {98}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_9,skAuth[]),uid_9)),n_7,pk(skAuth[])),n_7) that may be sent on channel auth_net[] by 7 may be received at input {98}.
+The event @p_act(@occ125_1,Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_9,skAuth[]),uid_9)),n_6,pk(skAuth[])),n_6)) records how variables are instantiated at {125}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_9,skAuth[]),uid_9)),n_6,pk(skAuth[])),n_6) that may be sent on channel auth_net[] by 8 may be received at input {125}.
+So event access_count(c2) may be executed at {150}.
+event(access_count(c2)).
+
+10. By 9, event(access_count(c2)).
+The goal is reached, represented in the following fact:
+event(access_count(c2)).
+
+
+A more detailed output of the traces is available with
+  set traceDisplay = long.
+
+new skAuth: key creating skAuth_1 at {1}
+
+new id_1: identity creating id_5 at {177} in copy a_4
+
+new ck_2: bitstring creating ck_5 at {179} in copy a_4
+
+new n_2: nonce creating n_10 at {181} in copy a_4
+
+out(reg_net, RegisterRequest(id_5,Cipher(aenc_internal(ck_5,n_10,pk(skAuth_1)),n_10))) at {187} in copy a_4 received at {5} in copy a_5
+
+get registered(=id_5): else branch taken at {44} in copy a_5
+
+insert registered(id_5) at {25} in copy a_5
+
+new uid_1: bitstring creating uid_10 at {34} in copy a_5
+
+new n_1: nonce creating n_11 at {37} in copy a_5
+
+event user_registered(uid_10) at {41} in copy a_5
+
+out(reg_net, Cipher(senc_internal(Credential(mac(uid_10,skAuth_1),uid_10),n_11,ck_5),n_11)) at {43} in copy a_5 received at {188} in copy a_4
+
+out(user_secure, (id_5,Credential(mac(uid_10,skAuth_1),uid_10),c0)) at {198} in copy a_4 received at {200} in copy a_6
+
+new n_4: nonce creating n_12 at {203} in copy a_6
+
+event user_authenticating(uid_10) at {208} in copy a_6
+
+out(user_secure, (id_5,Credential(mac(uid_10,skAuth_1),uid_10),c1)) at {212} in copy a_6 received at {200} in copy a_7
+
+new n_4: nonce creating n_13 at {203} in copy a_7
+
+event user_authenticating(uid_10) at {208} in copy a_7
+
+out(user_secure, (id_5,Credential(mac(uid_10,skAuth_1),uid_10),c2)) at {212} in copy a_7 received at {200} in copy a_8
+
+new n_4: nonce creating n_14 at {203} in copy a_8
+
+event user_authenticating(uid_10) at {208} in copy a_8
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_10,skAuth_1),uid_10)),n_14,pk(skAuth_1)),n_14)) at {210} in copy a_8 received at {70} in copy a_9
+
+event user_authenticated(uid_10) at {86} in copy a_9
+
+event access_count(c0) at {97} in copy a_9
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_10,skAuth_1),uid_10)),n_13,pk(skAuth_1)),n_13)) at {210} in copy a_7 received at {98} in copy a_9
+
+event user_authenticated(uid_10) at {114} in copy a_9
+
+event access_count(c1) at {124} in copy a_9
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_10,skAuth_1),uid_10)),n_12,pk(skAuth_1)),n_12)) at {210} in copy a_6 received at {125} in copy a_9
+
+event user_authenticated(uid_10) at {141} in copy a_9
+
+event access_count(c2) at {150} in copy a_9 (goal)
+
+The event access_count(c2) is executed at {150} in copy a_9.
+A trace has been found.
+RESULT not event(access_count(c2)) is false.
+-- Query not event(access_count(c3)) in process 1.
+Translating the process into Horn clauses...
+Completing...
+200 rules inserted. Base: 173 rules (43 with conclusion selected). Queue: 57 rules.
+400 rules inserted. Base: 351 rules (64 with conclusion selected). Queue: 23 rules.
+Starting query not event(access_count(c3))
+RESULT not event(access_count(c3)) is true.
+
+--------------------------------------------------------------
+Verification summary:
+
+Query not event(access_count(c2)) is false.
+
+Query not event(access_count(c3)) is true.
+
+--------------------------------------------------------------
+
+
+[nix-shell:~/Documents-Linux/star-proverif]$

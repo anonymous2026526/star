@@ -1,0 +1,80 @@
+set preciseActions = true.
+
+letfun ServiceAuthCore(r1: bitstring, r2: bitstring, target: bitstring) = 
+  if r1 <> target && r2 <> target then 0.
+
+letfun ServiceAuthCore4(r1: bitstring, r2: bitstring, r3: bitstring, r4: bitstring, target: bitstring) = 
+  let a = ServiceAuthCore(r1, r2, target) in 
+  let b = ServiceAuthCore(r3, r4, target) in 
+  0.
+
+letfun ServiceAuthCore8(r1: bitstring, r2: bitstring, r3: bitstring, r4: bitstring,
+  r5: bitstring, r6: bitstring, r7: bitstring, r8: bitstring, target: bitstring) = 
+  let a = ServiceAuthCore(r1, r2, target) in 
+  let b = ServiceAuthCore(r3, r4, target) in 
+  let c = ServiceAuthCore(r5, r6, target) in 
+  let d = ServiceAuthCore(r7, r8, target) in 
+  0.
+
+event access_count(counter).
+
+
+query event(access_count(c0)).
+query event(access_count(c1)).
+
+let ServerAuthSix(sk: key) =
+  in(auth_net, authReq: cipher);
+  let (h0:bitstring, uid:bitstring) = LibAuthCoreWithUid(authReq, today, sk) in
+  let _ = ServiceAuthCore4(null, null, null, null, h0) in
+  event access_count(c0);
+
+  in(auth_net, authReq: cipher);
+  let (h1:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  let _ = ServiceAuthCore4(null, null, null, h0, h1) in
+  event access_count(c1)
+
+  (*;
+  in(auth_net, authReq: cipher);
+  let (h2:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  let _ = ServiceAuthCore4(null, null, h0, h1, h2) in
+  event access_count(c2);
+
+  in(auth_net, authReq: cipher);
+  let (h3:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  let _ = ServiceAuthCore4(null, h0, h1, h2, h3) in
+  event access_count(c3);
+
+  in(auth_net, authReq: cipher);
+  let (h4:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  let _ = ServiceAuthCore4(h0, h1, h2, h3, h4) in
+  event access_count(c4);
+
+  in(auth_net, authReq: cipher);
+  let (h5:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  let _ = ServiceAuthCore8(null, null, null, h0, h1, h2, h3, h4, h5) in
+  event access_count(c5);
+
+  in(auth_net, authReq: cipher);
+  let (h6:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  let _ = ServiceAuthCore8(null, null, h0, h1, h2, h3, h4, h5, h6) in
+  event access_count(c6) *).
+
+let Server(sk: key, pk: pkey) =
+  !ServerRegister(sk)
+  | !ServerAuth(sk)
+  | !ServerAuthSix(sk).
+
+let System =
+  new skAuth: key;
+  let pkAuth: pkey = pk(skAuth) in
+  ( 
+  Server(skAuth, pkAuth)
+  | !(
+      new id: identity;
+      UserRegister(pkAuth, id)
+    ) 
+  | !UserAuth(pkAuth)
+  ).
+
+process
+  System

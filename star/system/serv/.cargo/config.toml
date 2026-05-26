@@ -1,0 +1,5 @@
+[target.x86_64-unknown-linux-gnu]
+rustflags = ['--cfg', 'getrandom_backend="linux_raw"']
+
+[target.x86_64-fortanix-unknown-sgx]
+rustflags = ['--cfg', 'getrandom_backend="rdrand"', '-C', 'target-feature=+rdrand']

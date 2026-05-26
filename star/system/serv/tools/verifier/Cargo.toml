@@ -1,0 +1,10 @@
+[package]
+name = "star_tools"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+base64 = "0.22.1"
+dcap-qvl = { version = "0.4.1", default-features = false, features = ["std", "report", "ring", "default-x509"] }
+parity-scale-codec = "3.7"
+tokio = { version = "1", features = ["rt-multi-thread"] }

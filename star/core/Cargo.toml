@@ -1,0 +1,45 @@
+[package]
+name = "star-core"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+timecop = ["timecop/timecop"]
+
+[dependencies]
+constant-time-utils = { path = "../../constant-time-utils", default-features = false }
+
+x25519-dalek = { version = "2", default-features = false, features = ["alloc", "precomputed-tables", "zeroize"] }
+curve25519-dalek = { version = "4", default-features = false, features = ["alloc", "precomputed-tables", "zeroize"] }
+hpke = { version = "0.11", default-features = false, features = ["alloc", "x25519"] }
+rand = { version = "0.8", default-features = false, features = ["getrandom"]}
+hmac = { version = "0.12", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+
+subtle = { version = "2.6.1", default-features = false }
+chacha20poly1305 = { version = "0.10", default-features = false, features = ["alloc"] }
+
+timecop = { path = "../../timecop-rs" }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bin]]
+name = "analysis"
+path = "./analysis/main.rs"
+required-features = ["timecop"]
+
+[[bin]]
+name = "comm"
+path = "./benches/comm.rs"
+
+[[bench]]
+name = "enclave"
+path = "benches/enclave.rs"
+harness = false
+
+[[bench]]
+name = "user"
+path = "benches/users.rs"
+harness = false

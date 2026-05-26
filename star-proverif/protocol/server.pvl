@@ -1,0 +1,51 @@
+fun fail_cipher(): cipher
+reduc fail_cipher() = fail .
+
+fun fail_nat(): nat
+reduc fail_nat() = fail .
+
+letfun ServiceRegisterCore(regReq: bitstring) =
+  let RegisterRequest(id: identity, cipherIn: cipher) = regReq in
+  get registered(=id) in (
+    fail_cipher()
+  ) else (
+    insert registered(id);
+    cipherIn
+  ).
+
+letfun LibRegisterCore(cipherIn: cipher, sk: key) = 
+  let ck = adec(cipherIn, sk) in
+  new uid: bitstring;
+
+  let code = mac(uid, sk) in
+  let cred = Credential(code, uid) in
+  let cipherOut = senc(cred, ck) in
+  event user_registered(uid);
+  cipherOut.
+
+(* letfun ServiceAuthCore(nym: bitstring) =
+  get used(=nym) in (
+    fail_nat()
+  ) else (
+    insert used(nym);
+    0 
+  ). *)
+
+letfun LibAuthCoreWithUid(authReq: cipher, t:period, sk: key) = 
+  let payload = adec(authReq, sk) in
+
+  let AuthRequestPlain(=t, cnt: counter, cred: bitstring) = payload in
+  let Credential(code: bitstring, uid: bitstring) = cred in
+
+  if code = mac(uid, sk) && (
+    cnt = c0 (* || cnt = c1 || cnt = c2 || cnt = c3 || cnt = c4 || cnt = c5  *) 
+  ) then
+    let nym = make_nym(cnt, t, uid) in
+    event user_authenticated(uid);
+
+    (nym, uid).
+
+letfun LibAuthCore(authReq: cipher, t:period, sk: key) = 
+  let (nym:bitstring, _:bitstring) = LibAuthCoreWithUid(authReq, t, sk) in 
+  nym.
+  

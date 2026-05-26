@@ -1,0 +1,19 @@
+[package]
+name = "star_attestation"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aes = "0.8"
+sgx-isa = "0.5.0"
+sha2 = { version = "0.10", default-features = false }
+libloading = { version = "0.8", optional = true }
+rand = { version = "0.9", optional = true }
+dcap-qvl = { version = "0.4.1", default-features = false, features = ["std", "rustcrypto", "default-x509"], optional = true }
+parity-scale-codec = { version = "3.7", default-features = false, features = ["std"], optional = true }
+tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+[features]
+default = ["std"]
+std = ["libloading", "rand"]
+dcap-verify = ["std", "dep:dcap-qvl", "dep:parity-scale-codec"]
+host-dcap = ["dcap-verify", "dcap-qvl/report", "dep:tokio"]

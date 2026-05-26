@@ -1,0 +1,12 @@
+let ServerRegister(sk: key) =
+  in(reg_net, regReq: bitstring);
+  let cipherIn = ServiceRegisterCore(regReq) in
+  let cipherOut = LibRegisterCore(cipherIn, sk) in
+  out(reg_net, cipherOut).
+
+let ServerAuth(sk: key) =
+  in(auth_net, authReq: cipher);
+  let h = LibAuthCore(authReq, today, sk) in
+  
+  (* let _ = ServiceAuthCore(h) in *)
+  event checkpoint().

@@ -1,0 +1,29 @@
+free id_A : identity.
+free id_B : identity.
+
+let System =
+  new sk: key;
+  let pk: pkey = pk(sk) in
+  Server(today, sk, pk) 
+  | Server(today, sk, pk) 
+  | Server(yesterday, sk, pk)
+  | UserRegister(pk, id_A) 
+  | UserRegister(pk, id_B)
+  | ( 
+      in(user_secure,(identity1: identity, cred1: bitstring, cnt: counter));
+      in(user_secure, (identity2: identity, cred2: bitstring, cnt: counter));
+
+      let authCipher = UserAuthCore(cred1, c1, yesterday, pk) in
+      out(auth_net, authCipher);
+
+      (* let authCipher = UserAuthCore(cred1, c0, today, pk) in
+      out(auth_net, authCipher); *) 
+
+      let (identity: identity, cred: bitstring) = choice[(identity1, cred1), (identity2, cred2)] in
+      let authCipher = UserAuthCore(cred, c1, today, pk) in
+      out(auth_net, authCipher);
+      0
+    ).
+
+process
+  System

@@ -1,0 +1,61 @@
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/decrypt/new": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/decrypt/new/tukey.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/decrypt/new/sample.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/decrypt/new/estimates.json": operation not supported on SGX yet
+enclave.issue_token.stages/decrypt
+                        time:   [339.30 µs 340.24 µs 341.67 µs]
+                        thrpt:  [548.77 KiB/s 551.08 KiB/s 552.61 KiB/s]
+Found 12 outliers among 100 measurements (12.00%)
+  1 (1.00%) high mild
+  11 (11.00%) high severe
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/decrypt/report": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/decrypt/new/benchmark.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/verify/new": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/verify/new/tukey.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/verify/new/sample.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/verify/new/estimates.json": operation not supported on SGX yet
+enclave.issue_token.stages/verify
+                        time:   [2.6983 µs 2.7042 µs 2.7127 µs]
+                        thrpt:  [28.125 MiB/s 28.214 MiB/s 28.275 MiB/s]
+Found 12 outliers among 100 measurements (12.00%)
+  4 (4.00%) high mild
+  8 (8.00%) high severe
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/verify/report": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/verify/new/benchmark.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/token_generation/new": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/token_generation/new/tukey.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/token_generation/new/sample.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/token_generation/new/estimates.json": operation not supported on SGX yet
+enclave.issue_token.stages/token_generation
+                        time:   [2.7433 µs 2.7480 µs 2.7536 µs]
+                        thrpt:  [11.083 MiB/s 11.106 MiB/s 11.124 MiB/s]
+Found 15 outliers among 100 measurements (15.00%)
+  5 (5.00%) high mild
+  10 (10.00%) high severe
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/token_generation/report": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/token_generation/new/benchmark.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/route/new": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/route/new/tukey.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/route/new/sample.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/route/new/estimates.json": operation not supported on SGX yet
+enclave.issue_token.stages/route
+                        time:   [19.105 ns 19.138 ns 19.179 ns]
+                        thrpt:  [52.140 Melem/s 52.253 Melem/s 52.342 Melem/s]
+Found 8 outliers among 100 measurements (8.00%)
+  5 (5.00%) high mild
+  3 (3.00%) high severe
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/route/report": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/route/new/benchmark.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/encrypt/new": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/encrypt/new/tukey.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/encrypt/new/sample.json": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/encrypt/new/estimates.json": operation not supported on SGX yet
+enclave.issue_token.stages/encrypt
+                        time:   [1.0719 µs 1.0733 µs 1.0750 µs]
+                        thrpt:  [28.388 MiB/s 28.435 MiB/s 28.470 MiB/s]
+Found 10 outliers among 100 measurements (10.00%)
+  4 (4.00%) high mild
+  6 (6.00%) high severe
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/encrypt/report": operation not supported on SGX yet
+Criterion.rs ERROR: error: Failed to access file "target/criterion/enclave.issue_token.stages/encrypt/new/benchmark.json": operation not supported on SGX yet
+

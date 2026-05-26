@@ -1,0 +1,29 @@
+user.latency/request_auth_plain
+                        time:   [148.02 ns 148.13 ns 148.25 ns]
+                        thrpt:  [514.62 MiB/s 515.04 MiB/s 515.43 MiB/s]
+                 change:
+                        time:   [-2.4830% -2.3627% -2.2572%] (p = 0.00 < 0.05)
+                        thrpt:  [+2.3093% +2.4199% +2.5462%]
+                        Performance has improved.
+Found 6 outliers among 100 measurements (6.00%)
+  4 (4.00%) high mild
+  2 (2.00%) high severe
+user.latency/encrypt    time:   [303.72 µs 304.00 µs 304.30 µs]
+                        thrpt:  [616.17 KiB/s 616.78 KiB/s 617.34 KiB/s]
+                 change:
+                        time:   [-0.2074% +0.0690% +0.3080%] (p = 0.64 > 0.05)
+                        thrpt:  [-0.3070% -0.0689% +0.2078%]
+                        No change in performance detected.
+Found 10 outliers among 100 measurements (10.00%)
+  9 (9.00%) high mild
+  1 (1.00%) high severe
+user.latency/route      time:   [484.37 ns 484.72 ns 485.12 ns]
+                        thrpt:  [2.0613 Melem/s 2.0630 Melem/s 2.0645 Melem/s]
+                 change:
+                        time:   [+0.2630% +0.4364% +0.6311%] (p = 0.00 < 0.05)
+                        thrpt:  [-0.6271% -0.4345% -0.2624%]
+                        Change within noise threshold.
+Found 8 outliers among 100 measurements (8.00%)
+  2 (2.00%) high mild
+  6 (6.00%) high severe
+

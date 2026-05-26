@@ -1,0 +1,102 @@
+set preciseActions = true.
+
+type key.
+type pkey.
+type nonce.
+type session.
+type cipher.
+type counter.
+type period.
+type identity.
+
+const c0: counter.
+const c1: counter.
+const c2: counter.
+const c3: counter.
+const c4: counter.
+const c5: counter. 
+const c6: counter.
+
+
+reduc
+  counter_next(c0) = c1;
+  counter_next(c1) = c2;
+  counter_next(c2) = c3;
+  counter_next(c3) = c4;
+  counter_next(c4) = c5;
+  counter_next(c5) = c6;
+  counter_next(c6) = c6.
+ 
+
+const null: bitstring.
+
+
+fun Credential(bitstring, bitstring): bitstring [data].
+fun RegisterRequest(identity, cipher): bitstring [data].
+fun AuthRequestPlain(period,  counter, bitstring): bitstring [data].
+fun Cipher(bitstring, nonce): cipher [data].
+fun prfKey(counter, bitstring): key [data].
+fun prfTag(period): bitstring [data].
+
+
+fun pk(key): pkey.
+
+fun aenc_internal(bitstring, nonce, pkey): bitstring.
+reduc forall x: bitstring, y: nonce, z: key; adec_internal(aenc_internal(x, y, pk(z)), y, z) = x.
+
+letfun aenc(plain: bitstring, pkey: pkey) = 
+  new n: nonce;
+  let c = aenc_internal(plain, n, pkey) in
+  let cipher = Cipher(c, n) in
+  cipher.
+
+letfun adec(cipher: cipher, sk: key) =
+  let Cipher(c, nonce) = cipher in
+  let plain = adec_internal(c, nonce, sk) in
+  plain.
+
+fun senc_internal(bitstring, nonce, bitstring): bitstring.
+reduc forall x: bitstring, y: nonce, z: bitstring; sdec_internal(senc_internal(x, y, z), y, z) = x.
+
+letfun senc(plain: bitstring, sk: bitstring) = 
+  new n: nonce;
+  let c = senc_internal(plain, n, sk) in
+  let cipher = Cipher(c, n) in
+  cipher.
+
+letfun sdec(cipher: cipher, sk: bitstring) =
+  let Cipher(c, n) = cipher in
+  let plain = sdec_internal(c, n, sk) in
+  plain.
+
+table registered(identity).
+table used(bitstring).
+(* table acess_counter(bitstring, counter). *)
+
+
+
+
+fun mac(bitstring, key): bitstring.
+fun prf(bitstring, key): bitstring.
+
+letfun make_nym(cnt: counter, period: period, uid:bitstring) =
+  let prfK = prfKey(cnt, uid) in
+  let prfT = prfTag(period) in
+
+  let h = prf(prfT, prfK) in
+  h.
+
+free auth_net : channel [private].
+free reg_net : channel [private].
+
+free user_secure : channel [private].
+
+const today     : period.
+const yesterday     : period.
+
+event checkpoint(). 
+event user_registered(bitstring).
+event user_authenticated(bitstring).
+event user_authenticating(bitstring).
+event user_access_count(bitstring, counter).
+event presented_count(bitstring, counter, session).

@@ -1,0 +1,4 @@
+/target/
+/sealed_enc_key.bin
+/sealed_prf_key.bin
+/app/examples/logs/

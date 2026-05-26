@@ -1,0 +1,21 @@
+[package]
+name = "key-manager"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+[dependencies]
+rand = { version = "0.8", default-features = false, features = ["getrandom", "std", "std_rng"] }
+star-core = { path = "../../../../../core" }
+star_attestation = { path = "../../attest", features = ["dcap-verify"] }
+hpke = { version = "0.11", default-features = false, features = ["alloc", "x25519"] }
+aesm-client = "0.6.2"
+sgx-isa = { version = "0.5.0", features = ["serde"] }
+
+serde = { version = "1", features = ["derive"] }
+bincode = "1"
+thiserror = "1"
+
+chacha20poly1305 = "0.10"
+hkdf = "0.12"
+sha2 = "0.10"

@@ -1,0 +1,24 @@
+free id_A : identity.
+free id_B : identity.
+
+query event(checkpoint()).
+query uid: bitstring; event(user_authenticated(uid)).
+query uid: bitstring; event(user_authenticated(uid)) ==> event(user_registered(x)).
+query uid: bitstring; event(user_authenticated(uid)) ==> event(user_authenticating(uid)).
+
+
+let System =
+  new sk: key;
+  let pk: pkey = pk(sk) in
+  Server(today, sk, pk) 
+  | UserRegister(pk, id_A)
+  | UserRegister(pk, id_B)
+  | ( 
+      in(user_secure,(id: identity, cred: bitstring, cnt: counter));
+      let authCipher = UserAuthCore(cred, c1, today, pk) in
+      out(auth_net, authCipher);
+      0
+    ).
+
+process
+  System

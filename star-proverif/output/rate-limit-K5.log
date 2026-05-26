@@ -1,0 +1,1197 @@
+nixos@nixos ~/Documents-Linux/star-proverif bench/rate-limit-v0.0.1 @ git diff
+nixos@nixos ~/Documents-Linux/star-proverif bench/rate-limit-v0.0.1 @ git diff
+diff --git a/protocol/server.pvl b/protocol/server.pvl
+index 203b3c6..b2aaef9 100644
+--- a/protocol/server.pvl
++++ b/protocol/server.pvl
+@@ -38,7 +38,7 @@ letfun LibAuthCoreWithUid(authReq: cipher, t:period, sk: key) =
+   let Credential(code: bitstring, uid: bitstring) = cred in
+
+   if code = mac(uid, sk) && (
+-    cnt = c0 || cnt = c1 || cnt = c2 || cnt = c3 || cnt = c4 || cnt = c5
++    cnt = c0 || cnt = c1 || cnt = c2 || cnt = c3 || cnt = c4
+   ) then
+     let nym = make_nym(cnt, t, uid) in
+     event user_authenticated(uid);
+diff --git a/rate-limitability.pv b/rate-limitability.pv
+index 6ea90eb..523f1ed 100644
+--- a/rate-limitability.pv
++++ b/rate-limitability.pv
+@@ -19,8 +19,8 @@ letfun ServiceAuthCore8(r1: bitstring, r2: bitstring, r3: bitstring, r4: bitstri
+ event access_count(counter).
+
+
++query event(access_count(c4)).
+ query event(access_count(c5)).
+-query event(access_count(c6)).
+
+ let ServerAuthSix(sk: key) =
+   in(auth_net, authReq: cipher);
+@@ -51,12 +51,12 @@ let ServerAuthSix(sk: key) =
+   in(auth_net, authReq: cipher);
+   let (h5:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+   let _ = ServiceAuthCore8(null, null, null, h0, h1, h2, h3, h4, h5) in
+-  event access_count(c5);
+-
++  event access_count(c5)
++  (*;
+   in(auth_net, authReq: cipher);
+   let (h6:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+   let _ = ServiceAuthCore8(null, null, h0, h1, h2, h3, h4, h5, h6) in
+-  event access_count(c6).
++  event access_count(c6) *).
+
+ let Server(sk: key, pk: pkey) =
+   !ServerRegister(sk)
+nixos@nixos ~/Documents-Linux/star-proverif bench/rate-limit-v0.0.1 @ make rate_limiting
+proverif -lib ./protocol/core.pvl -lib ./protocol/server.pvl -lib ./protocol/honest_server.pvl -lib ./protocol/user.pvl  ./rate-limitability.pv
+File "./protocol/core.pvl", line 50, characters 7-12:
+Warning: identifier cipher rebound.
+File "./protocol/core.pvl", line 54, characters 17-21:
+Warning: identifier nonce rebound.
+File "./protocol/core.pvl", line 64, characters 7-12:
+Warning: identifier cipher rebound.
+File "./protocol/user.pvl", line 5, characters 7-12:
+Warning: identifier cipher rebound.
+File "./rate-limitability.pv", line 31, characters 16-22:
+Warning: identifier authReq rebound.
+File "./rate-limitability.pv", line 36, characters 16-22:
+Warning: identifier authReq rebound.
+File "./rate-limitability.pv", line 41, characters 16-22:
+Warning: identifier authReq rebound.
+File "./rate-limitability.pv", line 46, characters 16-22:
+Warning: identifier authReq rebound.
+File "./rate-limitability.pv", line 51, characters 16-22:
+Warning: identifier authReq rebound.
+Process 0 (that is, the initial process):
+{1}new skAuth: key;
+{2}let pkAuth: pkey = pk(skAuth) in
+(
+    {3}let sk: key = skAuth in
+    (
+        {4}!
+        {5}in(reg_net, regReq: bitstring);
+        {6}let RegisterRequest(id: identity,cipherIn: cipher) = regReq in
+        {44}get registered(=id) in
+        (
+            {7}let cipherIn_1: cipher = fail_cipher in
+            {8}let v: cipher = cipherIn_1 in
+            {9}let v_1: bool = success?(1-proj-Cipher(v)) in
+            {10}let nonce_1: nonce = (if v_1 then 2-proj-Cipher(v) else caught-fail) in
+            {11}let c: bitstring = (if v_1 then 1-proj-Cipher(v) else caught-fail) in
+            {12}let plain: bitstring = (if v_1 then catch-fail(adec_internal(c,nonce_1,sk)) else caught-fail) in
+            {13}let v_2: bool = not-caught-fail(plain) in
+            {14}let ck: bitstring = (if v_1 then (if v_2 then plain else fail-any_type) else fail-any_type) in
+            {15}new uid: bitstring;
+            {16}let code: bitstring = mac(uid,sk) in
+            {17}let cred: bitstring = Credential(code,uid) in
+            {18}new n: nonce;
+            {19}let c_1: bitstring = senc_internal(cred,n,ck) in
+            {20}let cipher_1: cipher = Cipher(c_1,n) in
+            {21}let cipherOut: cipher = cipher_1 in
+            {22}event user_registered(uid);
+            {23}let cipherOut_1: cipher = cipherOut in
+            {24}out(reg_net, cipherOut_1)
+        )
+        else
+            {25}insert registered(id);
+            {26}let cipherIn_2: cipher = cipherIn in
+            {27}let v_3: cipher = cipherIn_2 in
+            {28}let v_4: bool = success?(1-proj-Cipher(v_3)) in
+            {29}let nonce_2: nonce = (if v_4 then 2-proj-Cipher(v_3) else caught-fail) in
+            {30}let c_2: bitstring = (if v_4 then 1-proj-Cipher(v_3) else caught-fail) in
+            {31}let plain_1: bitstring = (if v_4 then catch-fail(adec_internal(c_2,nonce_2,sk)) else caught-fail) in
+            {32}let v_5: bool = not-caught-fail(plain_1) in
+            {33}let ck_1: bitstring = (if v_4 then (if v_5 then plain_1 else fail-any_type) else fail-any_type) in
+            {34}new uid_1: bitstring;
+            {35}let code_1: bitstring = mac(uid_1,sk) in
+            {36}let cred_1: bitstring = Credential(code_1,uid_1) in
+            {37}new n_1: nonce;
+            {38}let c_3: bitstring = senc_internal(cred_1,n_1,ck_1) in
+            {39}let cipher_2: cipher = Cipher(c_3,n_1) in
+            {40}let cipherOut_2: cipher = cipher_2 in
+            {41}event user_registered(uid_1);
+            {42}let cipherOut_3: cipher = cipherOut_2 in
+            {43}out(reg_net, cipherOut_3)
+    ) | (
+        {45}!
+        {46}in(auth_net, authReq: cipher);
+        {47}let t: period = today in
+        {48}let v_6: cipher = authReq in
+        {49}let v_7: bool = success?(1-proj-Cipher(v_6)) in
+        {50}let nonce_3: nonce = (if v_7 then 2-proj-Cipher(v_6) else caught-fail) in
+        {51}let c_4: bitstring = (if v_7 then 1-proj-Cipher(v_6) else caught-fail) in
+        {52}let plain_2: bitstring = (if v_7 then catch-fail(adec_internal(c_4,nonce_3,sk)) else caught-fail) in
+        {53}let v_8: bool = not-caught-fail(plain_2) in
+        {54}let payload: bitstring = (if v_7 then (if v_8 then plain_2 else fail-any_type) else fail-any_type) in
+        {55}let AuthRequestPlain(=t,cnt: counter,cred_2: bitstring) = payload in
+        {56}let Credential(code_2: bitstring,uid_2: bitstring) = cred_2 in
+        {57}if ((code_2 = mac(uid_2,sk)) && ((cnt = c0) || ((cnt = c1) || ((cnt = c2) || ((cnt = c3) || (cnt = c4)))))) then
+        {58}let prfK: key = prfKey(cnt,uid_2) in
+        {59}let prfT: bitstring = prfTag(t) in
+        {60}let h: bitstring = prf(prfT,prfK) in
+        {61}let nym: bitstring = h in
+        {62}event user_authenticated(uid_2);
+        {63}let v_9: bitstring = (nym,uid_2) in
+        {64}let v_10: bool = success?(1-proj-2-tuple(v_9)) in
+        {65}let ignored_v: bitstring = (if v_10 then 2-proj-2-tuple(v_9) else caught-fail) in
+        {66}let nym_1: bitstring = (if v_10 then 1-proj-2-tuple(v_9) else caught-fail) in
+        {67}let h_1: bitstring = (if v_10 then nym_1 else fail-any_type) in
+        {68}event checkpoint
+    ) | (
+        {69}!
+        {70}in(auth_net, authReq_1: cipher);
+        {71}let t_1: period = today in
+        {72}let v_11: cipher = authReq_1 in
+        {73}let v_12: bool = success?(1-proj-Cipher(v_11)) in
+        {74}let nonce_4: nonce = (if v_12 then 2-proj-Cipher(v_11) else caught-fail) in
+        {75}let c_5: bitstring = (if v_12 then 1-proj-Cipher(v_11) else caught-fail) in
+        {76}let plain_3: bitstring = (if v_12 then catch-fail(adec_internal(c_5,nonce_4,sk)) else caught-fail) in
+        {77}let v_13: bool = not-caught-fail(plain_3) in
+        {78}let payload_1: bitstring = (if v_12 then (if v_13 then plain_3 else fail-any_type) else fail-any_type) in
+        {79}let AuthRequestPlain(=t_1,cnt_1: counter,cred_3: bitstring) = payload_1 in
+        {80}let Credential(code_3: bitstring,uid_3: bitstring) = cred_3 in
+        {81}if ((code_3 = mac(uid_3,sk)) && ((cnt_1 = c0) || ((cnt_1 = c1) || ((cnt_1 = c2) || ((cnt_1 = c3) || (cnt_1 = c4)))))) then
+        {82}let prfK_1: key = prfKey(cnt_1,uid_3) in
+        {83}let prfT_1: bitstring = prfTag(t_1) in
+        {84}let h_2: bitstring = prf(prfT_1,prfK_1) in
+        {85}let nym_2: bitstring = h_2 in
+        {86}event user_authenticated(uid_3);
+        {87}let (h0: bitstring,uid_4: bitstring) = (nym_2,uid_3) in
+        {88}let r1: bitstring = null in
+        {89}let r2: bitstring = null in
+        {90}let r3: bitstring = null in
+        {91}let r4: bitstring = null in
+        {92}let a: nat = catch-fail((if ((r1 ≠ h0) && (r2 ≠ h0)) then 0 else fail-any_type)) in
+        {93}let v_14: bool = not-caught-fail(a) in
+        {94}let b: nat = (if v_14 then catch-fail((if ((r3 ≠ h0) && (r4 ≠ h0)) then 0 else fail-any_type)) else caught-fail) in
+        {95}let v_15: bool = not-caught-fail(b) in
+        {96}let ignored_v_1: nat = (if v_14 then (if v_15 then 0 else fail-any_type) else fail-any_type) in
+        {97}event access_count(c0);
+        {98}in(auth_net, authReq_2: cipher);
+        {99}let t_2: period = today in
+        {100}let v_16: cipher = authReq_2 in
+        {101}let v_17: bool = success?(1-proj-Cipher(v_16)) in
+        {102}let nonce_5: nonce = (if v_17 then 2-proj-Cipher(v_16) else caught-fail) in
+        {103}let c_6: bitstring = (if v_17 then 1-proj-Cipher(v_16) else caught-fail) in
+        {104}let plain_4: bitstring = (if v_17 then catch-fail(adec_internal(c_6,nonce_5,sk)) else caught-fail) in
+        {105}let v_18: bool = not-caught-fail(plain_4) in
+        {106}let payload_2: bitstring = (if v_17 then (if v_18 then plain_4 else fail-any_type) else fail-any_type) in
+        {107}let AuthRequestPlain(=t_2,cnt_2: counter,cred_4: bitstring) = payload_2 in
+        {108}let Credential(code_4: bitstring,uid_5: bitstring) = cred_4 in
+        {109}if ((code_4 = mac(uid_5,sk)) && ((cnt_2 = c0) || ((cnt_2 = c1) || ((cnt_2 = c2) || ((cnt_2 = c3) || (cnt_2 = c4)))))) then
+        {110}let prfK_2: key = prfKey(cnt_2,uid_5) in
+        {111}let prfT_2: bitstring = prfTag(t_2) in
+        {112}let h_3: bitstring = prf(prfT_2,prfK_2) in
+        {113}let nym_3: bitstring = h_3 in
+        {114}event user_authenticated(uid_5);
+        {115}let (h1: bitstring,=uid_4) = (nym_3,uid_5) in
+        {116}let r1_1: bitstring = null in
+        {117}let r2_1: bitstring = null in
+        {118}let r3_1: bitstring = null in
+        {119}let a_1: nat = catch-fail((if ((r1_1 ≠ h1) && (r2_1 ≠ h1)) then 0 else fail-any_type)) in
+        {120}let v_19: bool = not-caught-fail(a_1) in
+        {121}let b_1: nat = (if v_19 then catch-fail((if ((r3_1 ≠ h1) && (h0 ≠ h1)) then 0 else fail-any_type)) else caught-fail) in
+        {122}let v_20: bool = not-caught-fail(b_1) in
+        {123}let ignored_v_2: nat = (if v_19 then (if v_20 then 0 else fail-any_type) else fail-any_type) in
+        {124}event access_count(c1);
+        {125}in(auth_net, authReq_3: cipher);
+        {126}let t_3: period = today in
+        {127}let v_21: cipher = authReq_3 in
+        {128}let v_22: bool = success?(1-proj-Cipher(v_21)) in
+        {129}let nonce_6: nonce = (if v_22 then 2-proj-Cipher(v_21) else caught-fail) in
+        {130}let c_7: bitstring = (if v_22 then 1-proj-Cipher(v_21) else caught-fail) in
+        {131}let plain_5: bitstring = (if v_22 then catch-fail(adec_internal(c_7,nonce_6,sk)) else caught-fail) in
+        {132}let v_23: bool = not-caught-fail(plain_5) in
+        {133}let payload_3: bitstring = (if v_22 then (if v_23 then plain_5 else fail-any_type) else fail-any_type) in
+        {134}let AuthRequestPlain(=t_3,cnt_3: counter,cred_5: bitstring) = payload_3 in
+        {135}let Credential(code_5: bitstring,uid_6: bitstring) = cred_5 in
+        {136}if ((code_5 = mac(uid_6,sk)) && ((cnt_3 = c0) || ((cnt_3 = c1) || ((cnt_3 = c2) || ((cnt_3 = c3) || (cnt_3 = c4)))))) then
+        {137}let prfK_3: key = prfKey(cnt_3,uid_6) in
+        {138}let prfT_3: bitstring = prfTag(t_3) in
+        {139}let h_4: bitstring = prf(prfT_3,prfK_3) in
+        {140}let nym_4: bitstring = h_4 in
+        {141}event user_authenticated(uid_6);
+        {142}let (h2: bitstring,=uid_4) = (nym_4,uid_6) in
+        {143}let r1_2: bitstring = null in
+        {144}let r2_2: bitstring = null in
+        {145}let a_2: nat = catch-fail((if ((r1_2 ≠ h2) && (r2_2 ≠ h2)) then 0 else fail-any_type)) in
+        {146}let v_24: bool = not-caught-fail(a_2) in
+        {147}let b_2: nat = (if v_24 then catch-fail((if ((h0 ≠ h2) && (h1 ≠ h2)) then 0 else fail-any_type)) else caught-fail) in
+        {148}let v_25: bool = not-caught-fail(b_2) in
+        {149}let ignored_v_3: nat = (if v_24 then (if v_25 then 0 else fail-any_type) else fail-any_type) in
+        {150}event access_count(c2);
+        {151}in(auth_net, authReq_4: cipher);
+        {152}let t_4: period = today in
+        {153}let v_26: cipher = authReq_4 in
+        {154}let v_27: bool = success?(1-proj-Cipher(v_26)) in
+        {155}let nonce_7: nonce = (if v_27 then 2-proj-Cipher(v_26) else caught-fail) in
+        {156}let c_8: bitstring = (if v_27 then 1-proj-Cipher(v_26) else caught-fail) in
+        {157}let plain_6: bitstring = (if v_27 then catch-fail(adec_internal(c_8,nonce_7,sk)) else caught-fail) in
+        {158}let v_28: bool = not-caught-fail(plain_6) in
+        {159}let payload_4: bitstring = (if v_27 then (if v_28 then plain_6 else fail-any_type) else fail-any_type) in
+        {160}let AuthRequestPlain(=t_4,cnt_4: counter,cred_6: bitstring) = payload_4 in
+        {161}let Credential(code_6: bitstring,uid_7: bitstring) = cred_6 in
+        {162}if ((code_6 = mac(uid_7,sk)) && ((cnt_4 = c0) || ((cnt_4 = c1) || ((cnt_4 = c2) || ((cnt_4 = c3) || (cnt_4 = c4)))))) then
+        {163}let prfK_4: key = prfKey(cnt_4,uid_7) in
+        {164}let prfT_4: bitstring = prfTag(t_4) in
+        {165}let h_5: bitstring = prf(prfT_4,prfK_4) in
+        {166}let nym_5: bitstring = h_5 in
+        {167}event user_authenticated(uid_7);
+        {168}let (h3: bitstring,=uid_4) = (nym_5,uid_7) in
+        {169}let r1_3: bitstring = null in
+        {170}let a_3: nat = catch-fail((if ((r1_3 ≠ h3) && (h0 ≠ h3)) then 0 else fail-any_type)) in
+        {171}let v_29: bool = not-caught-fail(a_3) in
+        {172}let b_3: nat = (if v_29 then catch-fail((if ((h1 ≠ h3) && (h2 ≠ h3)) then 0 else fail-any_type)) else caught-fail) in
+        {173}let v_30: bool = not-caught-fail(b_3) in
+        {174}let ignored_v_4: nat = (if v_29 then (if v_30 then 0 else fail-any_type) else fail-any_type) in
+        {175}event access_count(c3);
+        {176}in(auth_net, authReq_5: cipher);
+        {177}let t_5: period = today in
+        {178}let v_31: cipher = authReq_5 in
+        {179}let v_32: bool = success?(1-proj-Cipher(v_31)) in
+        {180}let nonce_8: nonce = (if v_32 then 2-proj-Cipher(v_31) else caught-fail) in
+        {181}let c_9: bitstring = (if v_32 then 1-proj-Cipher(v_31) else caught-fail) in
+        {182}let plain_7: bitstring = (if v_32 then catch-fail(adec_internal(c_9,nonce_8,sk)) else caught-fail) in
+        {183}let v_33: bool = not-caught-fail(plain_7) in
+        {184}let payload_5: bitstring = (if v_32 then (if v_33 then plain_7 else fail-any_type) else fail-any_type) in
+        {185}let AuthRequestPlain(=t_5,cnt_5: counter,cred_7: bitstring) = payload_5 in
+        {186}let Credential(code_7: bitstring,uid_8: bitstring) = cred_7 in
+        {187}if ((code_7 = mac(uid_8,sk)) && ((cnt_5 = c0) || ((cnt_5 = c1) || ((cnt_5 = c2) || ((cnt_5 = c3) || (cnt_5 = c4)))))) then
+        {188}let prfK_5: key = prfKey(cnt_5,uid_8) in
+        {189}let prfT_5: bitstring = prfTag(t_5) in
+        {190}let h_6: bitstring = prf(prfT_5,prfK_5) in
+        {191}let nym_6: bitstring = h_6 in
+        {192}event user_authenticated(uid_8);
+        {193}let (h4: bitstring,=uid_4) = (nym_6,uid_8) in
+        {194}let a_4: nat = catch-fail((if ((h0 ≠ h4) && (h1 ≠ h4)) then 0 else fail-any_type)) in
+        {195}let v_34: bool = not-caught-fail(a_4) in
+        {196}let b_4: nat = (if v_34 then catch-fail((if ((h2 ≠ h4) && (h3 ≠ h4)) then 0 else fail-any_type)) else caught-fail) in
+        {197}let v_35: bool = not-caught-fail(b_4) in
+        {198}let ignored_v_5: nat = (if v_34 then (if v_35 then 0 else fail-any_type) else fail-any_type) in
+        {199}event access_count(c4);
+        {200}in(auth_net, authReq_6: cipher);
+        {201}let t_6: period = today in
+        {202}let v_36: cipher = authReq_6 in
+        {203}let v_37: bool = success?(1-proj-Cipher(v_36)) in
+        {204}let nonce_9: nonce = (if v_37 then 2-proj-Cipher(v_36) else caught-fail) in
+        {205}let c_10: bitstring = (if v_37 then 1-proj-Cipher(v_36) else caught-fail) in
+        {206}let plain_8: bitstring = (if v_37 then catch-fail(adec_internal(c_10,nonce_9,sk)) else caught-fail) in
+        {207}let v_38: bool = not-caught-fail(plain_8) in
+        {208}let payload_6: bitstring = (if v_37 then (if v_38 then plain_8 else fail-any_type) else fail-any_type) in
+        {209}let AuthRequestPlain(=t_6,cnt_6: counter,cred_8: bitstring) = payload_6 in
+        {210}let Credential(code_8: bitstring,uid_9: bitstring) = cred_8 in
+        {211}if ((code_8 = mac(uid_9,sk)) && ((cnt_6 = c0) || ((cnt_6 = c1) || ((cnt_6 = c2) || ((cnt_6 = c3) || (cnt_6 = c4)))))) then
+        {212}let prfK_6: key = prfKey(cnt_6,uid_9) in
+        {213}let prfT_6: bitstring = prfTag(t_6) in
+        {214}let h_7: bitstring = prf(prfT_6,prfK_6) in
+        {215}let nym_7: bitstring = h_7 in
+        {216}event user_authenticated(uid_9);
+        {217}let (h5: bitstring,=uid_4) = (nym_7,uid_9) in
+        {218}let r1_4: bitstring = null in
+        {219}let r2_3: bitstring = null in
+        {220}let r3_2: bitstring = null in
+        {221}let a_5: nat = catch-fail((if ((r1_4 ≠ h5) && (r2_3 ≠ h5)) then 0 else fail-any_type)) in
+        {222}let v_39: bool = not-caught-fail(a_5) in
+        {223}let b_5: nat = (if v_39 then catch-fail((if ((r3_2 ≠ h5) && (h0 ≠ h5)) then 0 else fail-any_type)) else caught-fail) in
+        {224}let v_40: bool = not-caught-fail(b_5) in
+        {225}let c_11: nat = (if v_40 then catch-fail((if ((h1 ≠ h5) && (h2 ≠ h5)) then 0 else fail-any_type)) else caught-fail) in
+        {226}let v_41: bool = not-caught-fail(c_11) in
+        {227}let d: nat = (if v_41 then catch-fail((if ((h3 ≠ h5) && (h4 ≠ h5)) then 0 else fail-any_type)) else caught-fail) in
+        {228}let v_42: bool = not-caught-fail(d) in
+        {229}let ignored_v_6: nat = (if v_39 then (if v_40 then (if v_41 then (if v_42 then 0 else fail-any_type) else fail-any_type) else fail-any_type) else fail-any_type) in
+        {230}event access_count(c5)
+    )
+) | (
+    {231}!
+    {232}new id_1: identity;
+    {233}let id_2: identity = id_1 in
+    {234}new ck_2: bitstring;
+    {235}let plain_9: bitstring = ck_2 in
+    {236}new n_2: nonce;
+    {237}let c_12: bitstring = aenc_internal(plain_9,n_2,pkAuth) in
+    {238}let cipher_3: cipher = Cipher(c_12,n_2) in
+    {239}let cipher1: cipher = cipher_3 in
+    {240}let request: bitstring = RegisterRequest(id_2,cipher1) in
+    {241}let (ck_3: bitstring,request_1: bitstring) = (ck_2,request) in
+    {242}out(reg_net, request_1);
+    {243}in(reg_net, regResp: cipher);
+    {244}let v_43: cipher = regResp in
+    {245}let v_44: bool = success?(1-proj-Cipher(v_43)) in
+    {246}let n_3: nonce = (if v_44 then 2-proj-Cipher(v_43) else caught-fail) in
+    {247}let c_13: bitstring = (if v_44 then 1-proj-Cipher(v_43) else caught-fail) in
+    {248}let plain_10: bitstring = (if v_44 then catch-fail(sdec_internal(c_13,n_3,ck_3)) else caught-fail) in
+    {249}let v_45: bool = not-caught-fail(plain_10) in
+    {250}let cred_9: bitstring = catch-fail((if v_44 then (if v_45 then plain_10 else fail-any_type) else fail-any_type)) in
+    {251}let v_46: bool = not-caught-fail(cred_9) in
+    {252}let cred_10: bitstring = (if v_46 then cred_9 else fail-any_type) in
+    {253}out(user_secure, (id_2,cred_10,c0))
+) | (
+    {254}!
+    {255}in(user_secure, (id_3: identity,cred_11: bitstring,cnt_7: counter));
+    {256}let t_7: period = today in
+    {257}let authPayload: bitstring = AuthRequestPlain(t_7,cnt_7,cred_11) in
+    {258}new n_4: nonce;
+    {259}let c_14: bitstring = aenc_internal(authPayload,n_4,pkAuth) in
+    {260}let cipher_4: cipher = Cipher(c_14,n_4) in
+    {261}let cipher_5: cipher = cipher_4 in
+    {262}let Credential(code_9: bitstring,uid_10: bitstring) = cred_11 in
+    {263}event user_authenticating(uid_10);
+    {264}let authCipher: cipher = cipher_5 in
+    (
+        {265}out(auth_net, authCipher)
+    ) | (
+        {266}let next: counter = counter_next(cnt_7) in
+        {267}out(user_secure, (id_3,cred_11,next))
+    )
+)
+
+--  Process 1 (that is, process 0, with let moved downwards):
+{1}new skAuth: key;
+(
+    {3}let sk: key = skAuth in
+    (
+        {4}!
+        {5}in(reg_net, regReq: bitstring);
+        {6}let RegisterRequest(id: identity,cipherIn: cipher) = regReq in
+        {44}get registered(=id) in
+        (
+            {7}let cipherIn_1: cipher = fail_cipher in
+            {8}let v: cipher = cipherIn_1 in
+            {9}let v_1: bool = success?(1-proj-Cipher(v)) in
+            {10}let nonce_1: nonce = (if v_1 then 2-proj-Cipher(v) else caught-fail) in
+            {11}let c: bitstring = (if v_1 then 1-proj-Cipher(v) else caught-fail) in
+            {12}let plain: bitstring = (if v_1 then catch-fail(adec_internal(c,nonce_1,sk)) else caught-fail) in
+            {13}let v_2: bool = not-caught-fail(plain) in
+            {14}let ck: bitstring = (if v_1 then (if v_2 then plain else fail-any_type) else fail-any_type) in
+            {15}new uid: bitstring;
+            {18}new n: nonce;
+            {22}event user_registered(uid);
+            {16}let code: bitstring = mac(uid,sk) in
+            {17}let cred: bitstring = Credential(code,uid) in
+            {19}let c_1: bitstring = senc_internal(cred,n,ck) in
+            {20}let cipher_1: cipher = Cipher(c_1,n) in
+            {21}let cipherOut: cipher = cipher_1 in
+            {23}let cipherOut_1: cipher = cipherOut in
+            {24}out(reg_net, cipherOut_1)
+        )
+        else
+            {25}insert registered(id);
+            {26}let cipherIn_2: cipher = cipherIn in
+            {27}let v_3: cipher = cipherIn_2 in
+            {28}let v_4: bool = success?(1-proj-Cipher(v_3)) in
+            {29}let nonce_2: nonce = (if v_4 then 2-proj-Cipher(v_3) else caught-fail) in
+            {30}let c_2: bitstring = (if v_4 then 1-proj-Cipher(v_3) else caught-fail) in
+            {31}let plain_1: bitstring = (if v_4 then catch-fail(adec_internal(c_2,nonce_2,sk)) else caught-fail) in
+            {32}let v_5: bool = not-caught-fail(plain_1) in
+            {33}let ck_1: bitstring = (if v_4 then (if v_5 then plain_1 else fail-any_type) else fail-any_type) in
+            {34}new uid_1: bitstring;
+            {37}new n_1: nonce;
+            {41}event user_registered(uid_1);
+            {35}let code_1: bitstring = mac(uid_1,sk) in
+            {36}let cred_1: bitstring = Credential(code_1,uid_1) in
+            {38}let c_3: bitstring = senc_internal(cred_1,n_1,ck_1) in
+            {39}let cipher_2: cipher = Cipher(c_3,n_1) in
+            {40}let cipherOut_2: cipher = cipher_2 in
+            {42}let cipherOut_3: cipher = cipherOut_2 in
+            {43}out(reg_net, cipherOut_3)
+    ) | (
+        {45}!
+        {46}in(auth_net, authReq: cipher);
+        {48}let v_6: cipher = authReq in
+        {49}let v_7: bool = success?(1-proj-Cipher(v_6)) in
+        {50}let nonce_3: nonce = (if v_7 then 2-proj-Cipher(v_6) else caught-fail) in
+        {51}let c_4: bitstring = (if v_7 then 1-proj-Cipher(v_6) else caught-fail) in
+        {52}let plain_2: bitstring = (if v_7 then catch-fail(adec_internal(c_4,nonce_3,sk)) else caught-fail) in
+        {53}let v_8: bool = not-caught-fail(plain_2) in
+        {54}let payload: bitstring = (if v_7 then (if v_8 then plain_2 else fail-any_type) else fail-any_type) in
+        {47}let t: period = today in
+        {55}let AuthRequestPlain(=t,cnt: counter,cred_2: bitstring) = payload in
+        {56}let Credential(code_2: bitstring,uid_2: bitstring) = cred_2 in
+        {57}if ((code_2 = mac(uid_2,sk)) && ((cnt = c0) || ((cnt = c1) || ((cnt = c2) || ((cnt = c3) || (cnt = c4)))))) then
+        {62}event user_authenticated(uid_2);
+        {59}let prfT: bitstring = prfTag(t) in
+        {58}let prfK: key = prfKey(cnt,uid_2) in
+        {60}let h: bitstring = prf(prfT,prfK) in
+        {61}let nym: bitstring = h in
+        {63}let v_9: bitstring = (nym,uid_2) in
+        {64}let v_10: bool = success?(1-proj-2-tuple(v_9)) in
+        {65}let ignored_v: bitstring = (if v_10 then 2-proj-2-tuple(v_9) else caught-fail) in
+        {66}let nym_1: bitstring = (if v_10 then 1-proj-2-tuple(v_9) else caught-fail) in
+        {67}let h_1: bitstring = (if v_10 then nym_1 else fail-any_type) in
+        {68}event checkpoint
+    ) | (
+        {69}!
+        {70}in(auth_net, authReq_1: cipher);
+        {72}let v_11: cipher = authReq_1 in
+        {73}let v_12: bool = success?(1-proj-Cipher(v_11)) in
+        {74}let nonce_4: nonce = (if v_12 then 2-proj-Cipher(v_11) else caught-fail) in
+        {75}let c_5: bitstring = (if v_12 then 1-proj-Cipher(v_11) else caught-fail) in
+        {76}let plain_3: bitstring = (if v_12 then catch-fail(adec_internal(c_5,nonce_4,sk)) else caught-fail) in
+        {77}let v_13: bool = not-caught-fail(plain_3) in
+        {78}let payload_1: bitstring = (if v_12 then (if v_13 then plain_3 else fail-any_type) else fail-any_type) in
+        {71}let t_1: period = today in
+        {79}let AuthRequestPlain(=t_1,cnt_1: counter,cred_3: bitstring) = payload_1 in
+        {80}let Credential(code_3: bitstring,uid_3: bitstring) = cred_3 in
+        {81}if ((code_3 = mac(uid_3,sk)) && ((cnt_1 = c0) || ((cnt_1 = c1) || ((cnt_1 = c2) || ((cnt_1 = c3) || (cnt_1 = c4)))))) then
+        {86}event user_authenticated(uid_3);
+        {83}let prfT_1: bitstring = prfTag(t_1) in
+        {82}let prfK_1: key = prfKey(cnt_1,uid_3) in
+        {84}let h_2: bitstring = prf(prfT_1,prfK_1) in
+        {85}let nym_2: bitstring = h_2 in
+        {87}let (h0: bitstring,uid_4: bitstring) = (nym_2,uid_3) in
+        {89}let r2: bitstring = null in
+        {88}let r1: bitstring = null in
+        {92}let a: nat = catch-fail((if ((r1 ≠ h0) && (r2 ≠ h0)) then 0 else fail-any_type)) in
+        {93}let v_14: bool = not-caught-fail(a) in
+        {91}let r4: bitstring = null in
+        {90}let r3: bitstring = null in
+        {94}let b: nat = (if v_14 then catch-fail((if ((r3 ≠ h0) && (r4 ≠ h0)) then 0 else fail-any_type)) else caught-fail) in
+        {95}let v_15: bool = not-caught-fail(b) in
+        {96}let ignored_v_1: nat = (if v_14 then (if v_15 then 0 else fail-any_type) else fail-any_type) in
+        {97}event access_count(c0);
+        {98}in(auth_net, authReq_2: cipher);
+        {100}let v_16: cipher = authReq_2 in
+        {101}let v_17: bool = success?(1-proj-Cipher(v_16)) in
+        {102}let nonce_5: nonce = (if v_17 then 2-proj-Cipher(v_16) else caught-fail) in
+        {103}let c_6: bitstring = (if v_17 then 1-proj-Cipher(v_16) else caught-fail) in
+        {104}let plain_4: bitstring = (if v_17 then catch-fail(adec_internal(c_6,nonce_5,sk)) else caught-fail) in
+        {105}let v_18: bool = not-caught-fail(plain_4) in
+        {106}let payload_2: bitstring = (if v_17 then (if v_18 then plain_4 else fail-any_type) else fail-any_type) in
+        {99}let t_2: period = today in
+        {107}let AuthRequestPlain(=t_2,cnt_2: counter,cred_4: bitstring) = payload_2 in
+        {108}let Credential(code_4: bitstring,uid_5: bitstring) = cred_4 in
+        {109}if ((code_4 = mac(uid_5,sk)) && ((cnt_2 = c0) || ((cnt_2 = c1) || ((cnt_2 = c2) || ((cnt_2 = c3) || (cnt_2 = c4)))))) then
+        {114}event user_authenticated(uid_5);
+        {111}let prfT_2: bitstring = prfTag(t_2) in
+        {110}let prfK_2: key = prfKey(cnt_2,uid_5) in
+        {112}let h_3: bitstring = prf(prfT_2,prfK_2) in
+        {113}let nym_3: bitstring = h_3 in
+        {115}let (h1: bitstring,=uid_4) = (nym_3,uid_5) in
+        {117}let r2_1: bitstring = null in
+        {116}let r1_1: bitstring = null in
+        {119}let a_1: nat = catch-fail((if ((r1_1 ≠ h1) && (r2_1 ≠ h1)) then 0 else fail-any_type)) in
+        {120}let v_19: bool = not-caught-fail(a_1) in
+        {118}let r3_1: bitstring = null in
+        {121}let b_1: nat = (if v_19 then catch-fail((if ((r3_1 ≠ h1) && (h0 ≠ h1)) then 0 else fail-any_type)) else caught-fail) in
+        {122}let v_20: bool = not-caught-fail(b_1) in
+        {123}let ignored_v_2: nat = (if v_19 then (if v_20 then 0 else fail-any_type) else fail-any_type) in
+        {124}event access_count(c1);
+        {125}in(auth_net, authReq_3: cipher);
+        {127}let v_21: cipher = authReq_3 in
+        {128}let v_22: bool = success?(1-proj-Cipher(v_21)) in
+        {129}let nonce_6: nonce = (if v_22 then 2-proj-Cipher(v_21) else caught-fail) in
+        {130}let c_7: bitstring = (if v_22 then 1-proj-Cipher(v_21) else caught-fail) in
+        {131}let plain_5: bitstring = (if v_22 then catch-fail(adec_internal(c_7,nonce_6,sk)) else caught-fail) in
+        {132}let v_23: bool = not-caught-fail(plain_5) in
+        {133}let payload_3: bitstring = (if v_22 then (if v_23 then plain_5 else fail-any_type) else fail-any_type) in
+        {126}let t_3: period = today in
+        {134}let AuthRequestPlain(=t_3,cnt_3: counter,cred_5: bitstring) = payload_3 in
+        {135}let Credential(code_5: bitstring,uid_6: bitstring) = cred_5 in
+        {136}if ((code_5 = mac(uid_6,sk)) && ((cnt_3 = c0) || ((cnt_3 = c1) || ((cnt_3 = c2) || ((cnt_3 = c3) || (cnt_3 = c4)))))) then
+        {141}event user_authenticated(uid_6);
+        {138}let prfT_3: bitstring = prfTag(t_3) in
+        {137}let prfK_3: key = prfKey(cnt_3,uid_6) in
+        {139}let h_4: bitstring = prf(prfT_3,prfK_3) in
+        {140}let nym_4: bitstring = h_4 in
+        {142}let (h2: bitstring,=uid_4) = (nym_4,uid_6) in
+        {144}let r2_2: bitstring = null in
+        {143}let r1_2: bitstring = null in
+        {145}let a_2: nat = catch-fail((if ((r1_2 ≠ h2) && (r2_2 ≠ h2)) then 0 else fail-any_type)) in
+        {146}let v_24: bool = not-caught-fail(a_2) in
+        {147}let b_2: nat = (if v_24 then catch-fail((if ((h0 ≠ h2) && (h1 ≠ h2)) then 0 else fail-any_type)) else caught-fail) in
+        {148}let v_25: bool = not-caught-fail(b_2) in
+        {149}let ignored_v_3: nat = (if v_24 then (if v_25 then 0 else fail-any_type) else fail-any_type) in
+        {150}event access_count(c2);
+        {151}in(auth_net, authReq_4: cipher);
+        {153}let v_26: cipher = authReq_4 in
+        {154}let v_27: bool = success?(1-proj-Cipher(v_26)) in
+        {155}let nonce_7: nonce = (if v_27 then 2-proj-Cipher(v_26) else caught-fail) in
+        {156}let c_8: bitstring = (if v_27 then 1-proj-Cipher(v_26) else caught-fail) in
+        {157}let plain_6: bitstring = (if v_27 then catch-fail(adec_internal(c_8,nonce_7,sk)) else caught-fail) in
+        {158}let v_28: bool = not-caught-fail(plain_6) in
+        {159}let payload_4: bitstring = (if v_27 then (if v_28 then plain_6 else fail-any_type) else fail-any_type) in
+        {152}let t_4: period = today in
+        {160}let AuthRequestPlain(=t_4,cnt_4: counter,cred_6: bitstring) = payload_4 in
+        {161}let Credential(code_6: bitstring,uid_7: bitstring) = cred_6 in
+        {162}if ((code_6 = mac(uid_7,sk)) && ((cnt_4 = c0) || ((cnt_4 = c1) || ((cnt_4 = c2) || ((cnt_4 = c3) || (cnt_4 = c4)))))) then
+        {167}event user_authenticated(uid_7);
+        {164}let prfT_4: bitstring = prfTag(t_4) in
+        {163}let prfK_4: key = prfKey(cnt_4,uid_7) in
+        {165}let h_5: bitstring = prf(prfT_4,prfK_4) in
+        {166}let nym_5: bitstring = h_5 in
+        {168}let (h3: bitstring,=uid_4) = (nym_5,uid_7) in
+        {169}let r1_3: bitstring = null in
+        {170}let a_3: nat = catch-fail((if ((r1_3 ≠ h3) && (h0 ≠ h3)) then 0 else fail-any_type)) in
+        {171}let v_29: bool = not-caught-fail(a_3) in
+        {172}let b_3: nat = (if v_29 then catch-fail((if ((h1 ≠ h3) && (h2 ≠ h3)) then 0 else fail-any_type)) else caught-fail) in
+        {173}let v_30: bool = not-caught-fail(b_3) in
+        {174}let ignored_v_4: nat = (if v_29 then (if v_30 then 0 else fail-any_type) else fail-any_type) in
+        {175}event access_count(c3);
+        {176}in(auth_net, authReq_5: cipher);
+        {178}let v_31: cipher = authReq_5 in
+        {179}let v_32: bool = success?(1-proj-Cipher(v_31)) in
+        {180}let nonce_8: nonce = (if v_32 then 2-proj-Cipher(v_31) else caught-fail) in
+        {181}let c_9: bitstring = (if v_32 then 1-proj-Cipher(v_31) else caught-fail) in
+        {182}let plain_7: bitstring = (if v_32 then catch-fail(adec_internal(c_9,nonce_8,sk)) else caught-fail) in
+        {183}let v_33: bool = not-caught-fail(plain_7) in
+        {184}let payload_5: bitstring = (if v_32 then (if v_33 then plain_7 else fail-any_type) else fail-any_type) in
+        {177}let t_5: period = today in
+        {185}let AuthRequestPlain(=t_5,cnt_5: counter,cred_7: bitstring) = payload_5 in
+        {186}let Credential(code_7: bitstring,uid_8: bitstring) = cred_7 in
+        {187}if ((code_7 = mac(uid_8,sk)) && ((cnt_5 = c0) || ((cnt_5 = c1) || ((cnt_5 = c2) || ((cnt_5 = c3) || (cnt_5 = c4)))))) then
+        {192}event user_authenticated(uid_8);
+        {189}let prfT_5: bitstring = prfTag(t_5) in
+        {188}let prfK_5: key = prfKey(cnt_5,uid_8) in
+        {190}let h_6: bitstring = prf(prfT_5,prfK_5) in
+        {191}let nym_6: bitstring = h_6 in
+        {193}let (h4: bitstring,=uid_4) = (nym_6,uid_8) in
+        {194}let a_4: nat = catch-fail((if ((h0 ≠ h4) && (h1 ≠ h4)) then 0 else fail-any_type)) in
+        {195}let v_34: bool = not-caught-fail(a_4) in
+        {196}let b_4: nat = (if v_34 then catch-fail((if ((h2 ≠ h4) && (h3 ≠ h4)) then 0 else fail-any_type)) else caught-fail) in
+        {197}let v_35: bool = not-caught-fail(b_4) in
+        {198}let ignored_v_5: nat = (if v_34 then (if v_35 then 0 else fail-any_type) else fail-any_type) in
+        {199}event access_count(c4);
+        {200}in(auth_net, authReq_6: cipher);
+        {202}let v_36: cipher = authReq_6 in
+        {203}let v_37: bool = success?(1-proj-Cipher(v_36)) in
+        {204}let nonce_9: nonce = (if v_37 then 2-proj-Cipher(v_36) else caught-fail) in
+        {205}let c_10: bitstring = (if v_37 then 1-proj-Cipher(v_36) else caught-fail) in
+        {206}let plain_8: bitstring = (if v_37 then catch-fail(adec_internal(c_10,nonce_9,sk)) else caught-fail) in
+        {207}let v_38: bool = not-caught-fail(plain_8) in
+        {208}let payload_6: bitstring = (if v_37 then (if v_38 then plain_8 else fail-any_type) else fail-any_type) in
+        {201}let t_6: period = today in
+        {209}let AuthRequestPlain(=t_6,cnt_6: counter,cred_8: bitstring) = payload_6 in
+        {210}let Credential(code_8: bitstring,uid_9: bitstring) = cred_8 in
+        {211}if ((code_8 = mac(uid_9,sk)) && ((cnt_6 = c0) || ((cnt_6 = c1) || ((cnt_6 = c2) || ((cnt_6 = c3) || (cnt_6 = c4)))))) then
+        {216}event user_authenticated(uid_9);
+        {213}let prfT_6: bitstring = prfTag(t_6) in
+        {212}let prfK_6: key = prfKey(cnt_6,uid_9) in
+        {214}let h_7: bitstring = prf(prfT_6,prfK_6) in
+        {215}let nym_7: bitstring = h_7 in
+        {217}let (h5: bitstring,=uid_4) = (nym_7,uid_9) in
+        {219}let r2_3: bitstring = null in
+        {218}let r1_4: bitstring = null in
+        {221}let a_5: nat = catch-fail((if ((r1_4 ≠ h5) && (r2_3 ≠ h5)) then 0 else fail-any_type)) in
+        {222}let v_39: bool = not-caught-fail(a_5) in
+        {220}let r3_2: bitstring = null in
+        {223}let b_5: nat = (if v_39 then catch-fail((if ((r3_2 ≠ h5) && (h0 ≠ h5)) then 0 else fail-any_type)) else caught-fail) in
+        {224}let v_40: bool = not-caught-fail(b_5) in
+        {225}let c_11: nat = (if v_40 then catch-fail((if ((h1 ≠ h5) && (h2 ≠ h5)) then 0 else fail-any_type)) else caught-fail) in
+        {226}let v_41: bool = not-caught-fail(c_11) in
+        {227}let d: nat = (if v_41 then catch-fail((if ((h3 ≠ h5) && (h4 ≠ h5)) then 0 else fail-any_type)) else caught-fail) in
+        {228}let v_42: bool = not-caught-fail(d) in
+        {229}let ignored_v_6: nat = (if v_39 then (if v_40 then (if v_41 then (if v_42 then 0 else fail-any_type) else fail-any_type) else fail-any_type) else fail-any_type) in
+        {230}event access_count(c5)
+    )
+) | (
+    {2}let pkAuth: pkey = pk(skAuth) in
+    (
+        {231}!
+        {232}new id_1: identity;
+        {234}new ck_2: bitstring;
+        {236}new n_2: nonce;
+        {235}let plain_9: bitstring = ck_2 in
+        {237}let c_12: bitstring = aenc_internal(plain_9,n_2,pkAuth) in
+        {238}let cipher_3: cipher = Cipher(c_12,n_2) in
+        {239}let cipher1: cipher = cipher_3 in
+        {233}let id_2: identity = id_1 in
+        {240}let request: bitstring = RegisterRequest(id_2,cipher1) in
+        {241}let (ck_3: bitstring,request_1: bitstring) = (ck_2,request) in
+        {242}out(reg_net, request_1);
+        {243}in(reg_net, regResp: cipher);
+        {244}let v_43: cipher = regResp in
+        {245}let v_44: bool = success?(1-proj-Cipher(v_43)) in
+        {246}let n_3: nonce = (if v_44 then 2-proj-Cipher(v_43) else caught-fail) in
+        {247}let c_13: bitstring = (if v_44 then 1-proj-Cipher(v_43) else caught-fail) in
+        {248}let plain_10: bitstring = (if v_44 then catch-fail(sdec_internal(c_13,n_3,ck_3)) else caught-fail) in
+        {249}let v_45: bool = not-caught-fail(plain_10) in
+        {250}let cred_9: bitstring = catch-fail((if v_44 then (if v_45 then plain_10 else fail-any_type) else fail-any_type)) in
+        {251}let v_46: bool = not-caught-fail(cred_9) in
+        {252}let cred_10: bitstring = (if v_46 then cred_9 else fail-any_type) in
+        {253}out(user_secure, (id_2,cred_10,c0))
+    ) | (
+        {254}!
+        {255}in(user_secure, (id_3: identity,cred_11: bitstring,cnt_7: counter));
+        {258}new n_4: nonce;
+        {262}let Credential(code_9: bitstring,uid_10: bitstring) = cred_11 in
+        {263}event user_authenticating(uid_10);
+        (
+            {256}let t_7: period = today in
+            {257}let authPayload: bitstring = AuthRequestPlain(t_7,cnt_7,cred_11) in
+            {259}let c_14: bitstring = aenc_internal(authPayload,n_4,pkAuth) in
+            {260}let cipher_4: cipher = Cipher(c_14,n_4) in
+            {261}let cipher_5: cipher = cipher_4 in
+            {264}let authCipher: cipher = cipher_5 in
+            {265}out(auth_net, authCipher)
+        ) | (
+            {266}let next: counter = counter_next(cnt_7) in
+            {267}out(user_secure, (id_3,cred_11,next))
+        )
+    )
+)
+
+-- Query not event(access_count(c4)) in process 1.
+Translating the process into Horn clauses...
+Completing...
+200 rules inserted. Base: 200 rules (32 with conclusion selected). Queue: 336 rules.
+400 rules inserted. Base: 400 rules (33 with conclusion selected). Queue: 339 rules.
+600 rules inserted. Base: 600 rules (33 with conclusion selected). Queue: 339 rules.
+800 rules inserted. Base: 800 rules (35 with conclusion selected). Queue: 330 rules.
+1000 rules inserted. Base: 1000 rules (35 with conclusion selected). Queue: 330 rules.
+1200 rules inserted. Base: 1188 rules (36 with conclusion selected). Queue: 330 rules.
+1400 rules inserted. Base: 1373 rules (38 with conclusion selected). Queue: 565 rules.
+1600 rules inserted. Base: 1536 rules (38 with conclusion selected). Queue: 562 rules.
+1800 rules inserted. Base: 1715 rules (40 with conclusion selected). Queue: 862 rules.
+2000 rules inserted. Base: 1888 rules (41 with conclusion selected). Queue: 894 rules.
+2200 rules inserted. Base: 1962 rules (41 with conclusion selected). Queue: 894 rules.
+2400 rules inserted. Base: 2115 rules (43 with conclusion selected). Queue: 1227 rules.
+2600 rules inserted. Base: 2291 rules (44 with conclusion selected). Queue: 1301 rules.
+2800 rules inserted. Base: 2479 rules (45 with conclusion selected). Queue: 1355 rules.
+3000 rules inserted. Base: 2568 rules (45 with conclusion selected). Queue: 1367 rules.
+3200 rules inserted. Base: 2615 rules (47 with conclusion selected). Queue: 1764 rules.
+3400 rules inserted. Base: 2815 rules (48 with conclusion selected). Queue: 1854 rules.
+3600 rules inserted. Base: 2967 rules (49 with conclusion selected). Queue: 1927 rules.
+3800 rules inserted. Base: 3155 rules (51 with conclusion selected). Queue: 2022 rules.
+4000 rules inserted. Base: 3271 rules (51 with conclusion selected). Queue: 2068 rules.
+4200 rules inserted. Base: 3459 rules (52 with conclusion selected). Queue: 2143 rules.
+4400 rules inserted. Base: 3487 rules (52 with conclusion selected). Queue: 2156 rules.
+4600 rules inserted. Base: 3535 rules (55 with conclusion selected). Queue: 2740 rules.
+4800 rules inserted. Base: 3735 rules (57 with conclusion selected). Queue: 2858 rules.
+5000 rules inserted. Base: 3935 rules (60 with conclusion selected). Queue: 3020 rules.
+5200 rules inserted. Base: 4063 rules (60 with conclusion selected). Queue: 3056 rules.
+5400 rules inserted. Base: 4263 rules (63 with conclusion selected). Queue: 3216 rules.
+5600 rules inserted. Base: 4351 rules (63 with conclusion selected). Queue: 3251 rules.
+5800 rules inserted. Base: 4531 rules (64 with conclusion selected). Queue: 3325 rules.
+6000 rules inserted. Base: 4701 rules (67 with conclusion selected). Queue: 3418 rules.
+6200 rules inserted. Base: 4793 rules (67 with conclusion selected). Queue: 3414 rules.
+6400 rules inserted. Base: 4973 rules (68 with conclusion selected). Queue: 3480 rules.
+6600 rules inserted. Base: 5093 rules (68 with conclusion selected). Queue: 3440 rules.
+6800 rules inserted. Base: 5235 rules (73 with conclusion selected). Queue: 3465 rules.
+7000 rules inserted. Base: 5435 rules (78 with conclusion selected). Queue: 3589 rules.
+7200 rules inserted. Base: 5635 rules (78 with conclusion selected). Queue: 3721 rules.
+7400 rules inserted. Base: 5818 rules (84 with conclusion selected). Queue: 3829 rules.
+7600 rules inserted. Base: 5949 rules (87 with conclusion selected). Queue: 3868 rules.
+7800 rules inserted. Base: 6137 rules (87 with conclusion selected). Queue: 3986 rules.
+8000 rules inserted. Base: 6337 rules (95 with conclusion selected). Queue: 4138 rules.
+8200 rules inserted. Base: 6401 rules (95 with conclusion selected). Queue: 4135 rules.
+8400 rules inserted. Base: 6577 rules (95 with conclusion selected). Queue: 4181 rules.
+8600 rules inserted. Base: 6771 rules (101 with conclusion selected). Queue: 4307 rules.
+8800 rules inserted. Base: 6889 rules (104 with conclusion selected). Queue: 4373 rules.
+9000 rules inserted. Base: 6991 rules (104 with conclusion selected). Queue: 4356 rules.
+9200 rules inserted. Base: 7165 rules (106 with conclusion selected). Queue: 4401 rules.
+9400 rules inserted. Base: 7353 rules (112 with conclusion selected). Queue: 4444 rules.
+9600 rules inserted. Base: 7414 rules (112 with conclusion selected). Queue: 4426 rules.
+9800 rules inserted. Base: 7547 rules (112 with conclusion selected). Queue: 4415 rules.
+10000 rules inserted. Base: 7603 rules (113 with conclusion selected). Queue: 4414 rules.
+10200 rules inserted. Base: 7677 rules (117 with conclusion selected). Queue: 4413 rules.
+10400 rules inserted. Base: 7847 rules (126 with conclusion selected). Queue: 4476 rules.
+10600 rules inserted. Base: 8004 rules (132 with conclusion selected). Queue: 4543 rules.
+10800 rules inserted. Base: 8149 rules (132 with conclusion selected). Queue: 4592 rules.
+11000 rules inserted. Base: 8349 rules (134 with conclusion selected). Queue: 4758 rules.
+11200 rules inserted. Base: 8521 rules (144 with conclusion selected). Queue: 4811 rules.
+11400 rules inserted. Base: 8635 rules (150 with conclusion selected). Queue: 4826 rules.
+11600 rules inserted. Base: 8743 rules (150 with conclusion selected). Queue: 4826 rules.
+11800 rules inserted. Base: 8922 rules (150 with conclusion selected). Queue: 4908 rules.
+12000 rules inserted. Base: 9119 rules (158 with conclusion selected). Queue: 5043 rules.
+12200 rules inserted. Base: 9278 rules (166 with conclusion selected). Queue: 5081 rules.
+12400 rules inserted. Base: 9332 rules (166 with conclusion selected). Queue: 5069 rules.
+12600 rules inserted. Base: 9473 rules (166 with conclusion selected). Queue: 5060 rules.
+12800 rules inserted. Base: 9647 rules (171 with conclusion selected). Queue: 5102 rules.
+13000 rules inserted. Base: 9841 rules (181 with conclusion selected). Queue: 5180 rules.
+13200 rules inserted. Base: 9988 rules (184 with conclusion selected). Queue: 5170 rules.
+13400 rules inserted. Base: 10054 rules (184 with conclusion selected). Queue: 5153 rules.
+13600 rules inserted. Base: 10187 rules (186 with conclusion selected). Queue: 5140 rules.
+13800 rules inserted. Base: 10347 rules (191 with conclusion selected). Queue: 5128 rules.
+14000 rules inserted. Base: 10486 rules (192 with conclusion selected). Queue: 5079 rules.
+14200 rules inserted. Base: 10563 rules (192 with conclusion selected). Queue: 5054 rules.
+14400 rules inserted. Base: 10701 rules (192 with conclusion selected). Queue: 4991 rules.
+14600 rules inserted. Base: 10877 rules (192 with conclusion selected). Queue: 4895 rules.
+14800 rules inserted. Base: 11036 rules (202 with conclusion selected). Queue: 4901 rules.
+15000 rules inserted. Base: 11191 rules (212 with conclusion selected). Queue: 4905 rules.
+15200 rules inserted. Base: 11287 rules (218 with conclusion selected). Queue: 4920 rules.
+15400 rules inserted. Base: 11405 rules (218 with conclusion selected). Queue: 4928 rules.
+15600 rules inserted. Base: 11596 rules (218 with conclusion selected). Queue: 5016 rules.
+15800 rules inserted. Base: 11793 rules (227 with conclusion selected). Queue: 5154 rules.
+16000 rules inserted. Base: 11961 rules (236 with conclusion selected). Queue: 5163 rules.
+16200 rules inserted. Base: 12093 rules (242 with conclusion selected). Queue: 5132 rules.
+16400 rules inserted. Base: 12145 rules (242 with conclusion selected). Queue: 5122 rules.
+16600 rules inserted. Base: 12279 rules (242 with conclusion selected). Queue: 5114 rules.
+16800 rules inserted. Base: 12442 rules (245 with conclusion selected). Queue: 5128 rules.
+17000 rules inserted. Base: 12636 rules (257 with conclusion selected). Queue: 5203 rules.
+17200 rules inserted. Base: 12822 rules (266 with conclusion selected). Queue: 5267 rules.
+17400 rules inserted. Base: 12957 rules (266 with conclusion selected). Queue: 5211 rules.
+17600 rules inserted. Base: 13037 rules (266 with conclusion selected). Queue: 5186 rules.
+17800 rules inserted. Base: 13128 rules (267 with conclusion selected). Queue: 5167 rules.
+18000 rules inserted. Base: 13294 rules (274 with conclusion selected). Queue: 5152 rules.
+18200 rules inserted. Base: 13461 rules (282 with conclusion selected). Queue: 5135 rules.
+18400 rules inserted. Base: 13630 rules (284 with conclusion selected). Queue: 5069 rules.
+18600 rules inserted. Base: 13743 rules (284 with conclusion selected). Queue: 5023 rules.
+18800 rules inserted. Base: 13819 rules (284 with conclusion selected). Queue: 4996 rules.
+19000 rules inserted. Base: 13929 rules (284 with conclusion selected). Queue: 4941 rules.
+19200 rules inserted. Base: 14073 rules (284 with conclusion selected). Queue: 4875 rules.
+19400 rules inserted. Base: 14153 rules (284 with conclusion selected). Queue: 4844 rules.
+19600 rules inserted. Base: 14265 rules (286 with conclusion selected). Queue: 4798 rules.
+19800 rules inserted. Base: 14409 rules (290 with conclusion selected). Queue: 4756 rules.
+20000 rules inserted. Base: 14573 rules (302 with conclusion selected). Queue: 4725 rules.
+20200 rules inserted. Base: 14637 rules (302 with conclusion selected). Queue: 4714 rules.
+20400 rules inserted. Base: 14739 rules (302 with conclusion selected). Queue: 4699 rules.
+20600 rules inserted. Base: 14891 rules (302 with conclusion selected). Queue: 4693 rules.
+20800 rules inserted. Base: 15080 rules (312 with conclusion selected). Queue: 4761 rules.
+21000 rules inserted. Base: 15275 rules (324 with conclusion selected). Queue: 4841 rules.
+21200 rules inserted. Base: 15437 rules (326 with conclusion selected). Queue: 4796 rules.
+21400 rules inserted. Base: 15589 rules (326 with conclusion selected). Queue: 4730 rules.
+21600 rules inserted. Base: 15685 rules (326 with conclusion selected). Queue: 4700 rules.
+21800 rules inserted. Base: 15753 rules (326 with conclusion selected). Queue: 4676 rules.
+22000 rules inserted. Base: 15897 rules (332 with conclusion selected). Queue: 4658 rules.
+22200 rules inserted. Base: 16064 rules (340 with conclusion selected). Queue: 4640 rules.
+22400 rules inserted. Base: 16231 rules (349 with conclusion selected). Queue: 4623 rules.
+22600 rules inserted. Base: 16412 rules (350 with conclusion selected). Queue: 4532 rules.
+22800 rules inserted. Base: 16548 rules (350 with conclusion selected). Queue: 4471 rules.
+23000 rules inserted. Base: 16660 rules (350 with conclusion selected). Queue: 4427 rules.
+23200 rules inserted. Base: 16747 rules (350 with conclusion selected). Queue: 4397 rules.
+23400 rules inserted. Base: 16839 rules (350 with conclusion selected). Queue: 4366 rules.
+23600 rules inserted. Base: 17017 rules (350 with conclusion selected). Queue: 4260 rules.
+23800 rules inserted. Base: 17151 rules (350 with conclusion selected). Queue: 4198 rules.
+24000 rules inserted. Base: 17313 rules (350 with conclusion selected). Queue: 4101 rules.
+24200 rules inserted. Base: 17489 rules (350 with conclusion selected). Queue: 3994 rules.
+24400 rules inserted. Base: 17678 rules (350 with conclusion selected). Queue: 3840 rules.
+24600 rules inserted. Base: 17831 rules (350 with conclusion selected). Queue: 3762 rules.
+24800 rules inserted. Base: 17985 rules (350 with conclusion selected). Queue: 3700 rules.
+25000 rules inserted. Base: 18091 rules (350 with conclusion selected). Queue: 3658 rules.
+25200 rules inserted. Base: 18167 rules (350 with conclusion selected). Queue: 3632 rules.
+25400 rules inserted. Base: 18287 rules (354 with conclusion selected). Queue: 3610 rules.
+25600 rules inserted. Base: 18454 rules (362 with conclusion selected). Queue: 3594 rules.
+25800 rules inserted. Base: 18619 rules (370 with conclusion selected). Queue: 3577 rules.
+26000 rules inserted. Base: 18797 rules (374 with conclusion selected). Queue: 3504 rules.
+26200 rules inserted. Base: 18980 rules (374 with conclusion selected). Queue: 3392 rules.
+26400 rules inserted. Base: 19117 rules (374 with conclusion selected). Queue: 3331 rules.
+26600 rules inserted. Base: 19232 rules (374 with conclusion selected). Queue: 3285 rules.
+26800 rules inserted. Base: 19327 rules (374 with conclusion selected). Queue: 3251 rules.
+27000 rules inserted. Base: 19419 rules (374 with conclusion selected). Queue: 3223 rules.
+27200 rules inserted. Base: 19581 rules (374 with conclusion selected). Queue: 3116 rules.
+27400 rules inserted. Base: 19746 rules (374 with conclusion selected). Queue: 3026 rules.
+27600 rules inserted. Base: 19890 rules (374 with conclusion selected). Queue: 2955 rules.
+27800 rules inserted. Base: 20045 rules (374 with conclusion selected). Queue: 2865 rules.
+28000 rules inserted. Base: 20229 rules (374 with conclusion selected). Queue: 2750 rules.
+28200 rules inserted. Base: 20421 rules (374 with conclusion selected). Queue: 2612 rules.
+28400 rules inserted. Base: 20609 rules (374 with conclusion selected). Queue: 2484 rules.
+28600 rules inserted. Base: 20791 rules (374 with conclusion selected). Queue: 2374 rules.
+28800 rules inserted. Base: 20930 rules (374 with conclusion selected). Queue: 2309 rules.
+29000 rules inserted. Base: 21045 rules (374 with conclusion selected). Queue: 2264 rules.
+29200 rules inserted. Base: 21139 rules (374 with conclusion selected). Queue: 2232 rules.
+29400 rules inserted. Base: 21231 rules (374 with conclusion selected). Queue: 2201 rules.
+29600 rules inserted. Base: 21395 rules (374 with conclusion selected). Queue: 2084 rules.
+29800 rules inserted. Base: 21574 rules (374 with conclusion selected). Queue: 1979 rules.
+30000 rules inserted. Base: 21725 rules (374 with conclusion selected). Queue: 1902 rules.
+30200 rules inserted. Base: 21871 rules (374 with conclusion selected). Queue: 1829 rules.
+30400 rules inserted. Base: 22051 rules (374 with conclusion selected). Queue: 1702 rules.
+30600 rules inserted. Base: 22233 rules (374 with conclusion selected). Queue: 1589 rules.
+30800 rules inserted. Base: 22427 rules (374 with conclusion selected). Queue: 1440 rules.
+31000 rules inserted. Base: 22627 rules (374 with conclusion selected). Queue: 1278 rules.
+31200 rules inserted. Base: 22803 rules (374 with conclusion selected). Queue: 1178 rules.
+31400 rules inserted. Base: 22952 rules (374 with conclusion selected). Queue: 1102 rules.
+31600 rules inserted. Base: 23098 rules (374 with conclusion selected). Queue: 1029 rules.
+31800 rules inserted. Base: 23283 rules (374 with conclusion selected). Queue: 893 rules.
+32000 rules inserted. Base: 23466 rules (374 with conclusion selected). Queue: 776 rules.
+32200 rules inserted. Base: 23659 rules (374 with conclusion selected). Queue: 630 rules.
+32400 rules inserted. Base: 23858 rules (374 with conclusion selected). Queue: 467 rules.
+32600 rules inserted. Base: 24041 rules (374 with conclusion selected). Queue: 349 rules.
+32800 rules inserted. Base: 24235 rules (374 with conclusion selected). Queue: 200 rules.
+33000 rules inserted. Base: 24435 rules (374 with conclusion selected). Queue: 26 rules.
+Starting query not event(access_count(c4))
+goal reachable: b-event(@p_act(@occ176_1,Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_11,skAuth[]),uid_11)),n_5,pk(skAuth[])),n_5))) && b-event(@p_act(@occ151_1,Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_11,skAuth[]),uid_11)),n_6,pk(skAuth[])),n_6))) && b-event(@p_act(@occ125_1,Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_11,skAuth[]),uid_11)),n_7,pk(skAuth[])),n_7))) && b-event(@p_act(@occ98_1,Cipher(aenc_internal(AuthRequestPlain(today,c3,Credential(mac(uid_11,skAuth[]),uid_11)),n_8,pk(skAuth[])),n_8))) && b-event(@p_act(@occ5_1,RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_9,pk(skAuth[])),n_9)))) && b-event(@p_act(@occ243_1,Cipher(senc_internal(Credential(mac(uid_11,skAuth[]),uid_11),n_10,ck_4),n_10))) && b-event(@p_act(@occ255_1,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c0))) && b-event(@p_act(@occ255_2,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c1))) && b-event(@p_act(@occ255_3,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c2))) && b-event(@p_act(@occ255_4,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c3))) && b-event(@p_act(@occ255_5,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c4))) && b-event(@p_act(@occ70_1,Cipher(aenc_internal(AuthRequestPlain(today,c4,Credential(mac(uid_11,skAuth[]),uid_11)),n_11,pk(skAuth[])),n_11))) -> event(access_count(c4))
+Abbreviations:
+@occ176_1 = @occ176[!1 = @sid]
+id_4 = id_1[!1 = @sid_1]
+ck_4 = ck_2[!1 = @sid_1]
+n_9 = n_2[!1 = @sid_1]
+uid_11 = uid_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_9,pk(skAuth[])),n_9)),!1 = @sid_2]
+n_5 = n_4[cnt_7 = c0,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_3]
+@occ151_1 = @occ151[!1 = @sid]
+n_6 = n_4[cnt_7 = c1,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_4]
+@occ125_1 = @occ125[!1 = @sid]
+n_7 = n_4[cnt_7 = c2,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_5]
+@occ98_1 = @occ98[!1 = @sid]
+n_8 = n_4[cnt_7 = c3,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_6]
+@occ5_1 = @occ5[!1 = @sid_2]
+@occ243_1 = @occ243[!1 = @sid_1]
+n_10 = n_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_9,pk(skAuth[])),n_9)),!1 = @sid_2]
+@occ255_1 = @occ255[!1 = @sid_3]
+@occ255_2 = @occ255[!1 = @sid_4]
+@occ255_3 = @occ255[!1 = @sid_5]
+@occ255_4 = @occ255[!1 = @sid_6]
+@occ255_5 = @occ255[!1 = @sid_7]
+@occ70_1 = @occ70[!1 = @sid]
+n_11 = n_4[cnt_7 = c4,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_7]
+
+Derivation:
+Abbreviations:
+id_4 = id_1[!1 = @sid]
+ck_4 = ck_2[!1 = @sid]
+n_5 = n_2[!1 = @sid]
+uid_11 = uid_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)),!1 = @sid_1]
+n_6 = n_4[cnt_7 = c0,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_2]
+@occ255_1 = @occ255[!1 = @sid_2]
+@occ176_1 = @occ176[!1 = @sid_3]
+n_7 = n_4[cnt_7 = c1,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_4]
+@occ255_2 = @occ255[!1 = @sid_4]
+@occ151_1 = @occ151[!1 = @sid_3]
+n_8 = n_4[cnt_7 = c2,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_5]
+@occ255_3 = @occ255[!1 = @sid_5]
+@occ125_1 = @occ125[!1 = @sid_3]
+n_9 = n_4[cnt_7 = c3,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_6]
+@occ255_4 = @occ255[!1 = @sid_6]
+@occ98_1 = @occ98[!1 = @sid_3]
+n_10 = n_4[cnt_7 = c4,cred_11 = Credential(mac(uid_11,skAuth[]),uid_11),id_3 = id_4,!1 = @sid_7]
+n_11 = n_1[regReq = RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)),!1 = @sid_1]
+@occ5_1 = @occ5[!1 = @sid_1]
+@occ243_1 = @occ243[!1 = @sid]
+@occ255_5 = @occ255[!1 = @sid_7]
+@occ70_1 = @occ70[!1 = @sid_3]
+
+1. The message RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)) may be sent on channel reg_net[] at output {242}.
+mess(reg_net[],RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5))).
+
+2. The event @p_act(@occ5_1,RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5))) records how variables are instantiated at {5}.
+The message RegisterRequest(id_4,Cipher(aenc_internal(ck_4,n_5,pk(skAuth[])),n_5)) that may be sent on channel reg_net[] by 1 may be received at input {5}.
+So the message Cipher(senc_internal(Credential(mac(uid_11,skAuth[]),uid_11),n_11,ck_4),n_11) may be sent on channel reg_net[] at output {43}.
+mess(reg_net[],Cipher(senc_internal(Credential(mac(uid_11,skAuth[]),uid_11),n_11,ck_4),n_11)).
+
+3. The event @p_act(@occ243_1,Cipher(senc_internal(Credential(mac(uid_11,skAuth[]),uid_11),n_11,ck_4),n_11)) records how variables are instantiated at {243}.
+The message Cipher(senc_internal(Credential(mac(uid_11,skAuth[]),uid_11),n_11,ck_4),n_11) that may be sent on channel reg_net[] by 2 may be received at input {243}.
+So the message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c0) may be sent on channel user_secure[] at output {253}.
+mess(user_secure[],(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c0)).
+
+4. The event @p_act(@occ255_1,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c0)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c0) that may be sent on channel user_secure[] by 3 may be received at input {255}.
+So the message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c1) may be sent on channel user_secure[] at output {267}.
+mess(user_secure[],(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c1)).
+
+5. The event @p_act(@occ255_2,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c1)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c1) that may be sent on channel user_secure[] by 4 may be received at input {255}.
+So the message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c2) may be sent on channel user_secure[] at output {267}.
+mess(user_secure[],(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c2)).
+
+6. The event @p_act(@occ255_3,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c2)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c2) that may be sent on channel user_secure[] by 5 may be received at input {255}.
+So the message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c3) may be sent on channel user_secure[] at output {267}.
+mess(user_secure[],(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c3)).
+
+7. The event @p_act(@occ255_4,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c3)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c3) that may be sent on channel user_secure[] by 6 may be received at input {255}.
+So the message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c4) may be sent on channel user_secure[] at output {267}.
+mess(user_secure[],(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c4)).
+
+8. The event @p_act(@occ255_5,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c4)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c4) that may be sent on channel user_secure[] by 7 may be received at input {255}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c4,Credential(mac(uid_11,skAuth[]),uid_11)),n_10,pk(skAuth[])),n_10) may be sent on channel auth_net[] at output {265}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c4,Credential(mac(uid_11,skAuth[]),uid_11)),n_10,pk(skAuth[])),n_10)).
+
+9. The event @p_act(@occ255_4,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c3)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c3) that may be sent on channel user_secure[] by 6 may be received at input {255}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c3,Credential(mac(uid_11,skAuth[]),uid_11)),n_9,pk(skAuth[])),n_9) may be sent on channel auth_net[] at output {265}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c3,Credential(mac(uid_11,skAuth[]),uid_11)),n_9,pk(skAuth[])),n_9)).
+
+10. The event @p_act(@occ255_3,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c2)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c2) that may be sent on channel user_secure[] by 5 may be received at input {255}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_11,skAuth[]),uid_11)),n_8,pk(skAuth[])),n_8) may be sent on channel auth_net[] at output {265}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_11,skAuth[]),uid_11)),n_8,pk(skAuth[])),n_8)).
+
+11. The event @p_act(@occ255_2,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c1)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c1) that may be sent on channel user_secure[] by 4 may be received at input {255}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_11,skAuth[]),uid_11)),n_7,pk(skAuth[])),n_7) may be sent on channel auth_net[] at output {265}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_11,skAuth[]),uid_11)),n_7,pk(skAuth[])),n_7)).
+
+12. The event @p_act(@occ255_1,(id_4,Credential(mac(uid_11,skAuth[]),uid_11),c0)) records how variables are instantiated at {255}.
+The message (id_4,Credential(mac(uid_11,skAuth[]),uid_11),c0) that may be sent on channel user_secure[] by 3 may be received at input {255}.
+So the message Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_11,skAuth[]),uid_11)),n_6,pk(skAuth[])),n_6) may be sent on channel auth_net[] at output {265}.
+mess(auth_net[],Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_11,skAuth[]),uid_11)),n_6,pk(skAuth[])),n_6)).
+
+13. The event @p_act(@occ70_1,Cipher(aenc_internal(AuthRequestPlain(today,c4,Credential(mac(uid_11,skAuth[]),uid_11)),n_10,pk(skAuth[])),n_10)) records how variables are instantiated at {70}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c4,Credential(mac(uid_11,skAuth[]),uid_11)),n_10,pk(skAuth[])),n_10) that may be sent on channel auth_net[] by 8 may be received at input {70}.
+The event @p_act(@occ98_1,Cipher(aenc_internal(AuthRequestPlain(today,c3,Credential(mac(uid_11,skAuth[]),uid_11)),n_9,pk(skAuth[])),n_9)) records how variables are instantiated at {98}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c3,Credential(mac(uid_11,skAuth[]),uid_11)),n_9,pk(skAuth[])),n_9) that may be sent on channel auth_net[] by 9 may be received at input {98}.
+The event @p_act(@occ125_1,Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_11,skAuth[]),uid_11)),n_8,pk(skAuth[])),n_8)) records how variables are instantiated at {125}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_11,skAuth[]),uid_11)),n_8,pk(skAuth[])),n_8) that may be sent on channel auth_net[] by 10 may be received at input {125}.
+The event @p_act(@occ151_1,Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_11,skAuth[]),uid_11)),n_7,pk(skAuth[])),n_7)) records how variables are instantiated at {151}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_11,skAuth[]),uid_11)),n_7,pk(skAuth[])),n_7) that may be sent on channel auth_net[] by 11 may be received at input {151}.
+The event @p_act(@occ176_1,Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_11,skAuth[]),uid_11)),n_6,pk(skAuth[])),n_6)) records how variables are instantiated at {176}.
+The message Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_11,skAuth[]),uid_11)),n_6,pk(skAuth[])),n_6) that may be sent on channel auth_net[] by 12 may be received at input {176}.
+So event access_count(c4) may be executed at {199}.
+event(access_count(c4)).
+
+14. By 13, event(access_count(c4)).
+The goal is reached, represented in the following fact:
+event(access_count(c4)).
+
+
+A more detailed output of the traces is available with
+  set traceDisplay = long.
+
+new skAuth: key creating skAuth_1 at {1}
+
+new id_1: identity creating id_5 at {232} in copy a_6
+
+new ck_2: bitstring creating ck_5 at {234} in copy a_6
+
+new n_2: nonce creating n_12 at {236} in copy a_6
+
+out(reg_net, RegisterRequest(id_5,Cipher(aenc_internal(ck_5,n_12,pk(skAuth_1)),n_12))) at {242} in copy a_6 received at {5} in copy a_7
+
+get registered(=id_5): else branch taken at {44} in copy a_7
+
+insert registered(id_5) at {25} in copy a_7
+
+new uid_1: bitstring creating uid_12 at {34} in copy a_7
+
+new n_1: nonce creating n_13 at {37} in copy a_7
+
+event user_registered(uid_12) at {41} in copy a_7
+
+out(reg_net, Cipher(senc_internal(Credential(mac(uid_12,skAuth_1),uid_12),n_13,ck_5),n_13)) at {43} in copy a_7 received at {243} in copy a_6
+
+out(user_secure, (id_5,Credential(mac(uid_12,skAuth_1),uid_12),c0)) at {253} in copy a_6 received at {255} in copy a_8
+
+new n_4: nonce creating n_14 at {258} in copy a_8
+
+event user_authenticating(uid_12) at {263} in copy a_8
+
+out(user_secure, (id_5,Credential(mac(uid_12,skAuth_1),uid_12),c1)) at {267} in copy a_8 received at {255} in copy a_9
+
+new n_4: nonce creating n_15 at {258} in copy a_9
+
+event user_authenticating(uid_12) at {263} in copy a_9
+
+out(user_secure, (id_5,Credential(mac(uid_12,skAuth_1),uid_12),c2)) at {267} in copy a_9 received at {255} in copy a_10
+
+new n_4: nonce creating n_16 at {258} in copy a_10
+
+event user_authenticating(uid_12) at {263} in copy a_10
+
+out(user_secure, (id_5,Credential(mac(uid_12,skAuth_1),uid_12),c3)) at {267} in copy a_10 received at {255} in copy a_11
+
+new n_4: nonce creating n_17 at {258} in copy a_11
+
+event user_authenticating(uid_12) at {263} in copy a_11
+
+out(user_secure, (id_5,Credential(mac(uid_12,skAuth_1),uid_12),c4)) at {267} in copy a_11 received at {255} in copy a_12
+
+new n_4: nonce creating n_18 at {258} in copy a_12
+
+event user_authenticating(uid_12) at {263} in copy a_12
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c4,Credential(mac(uid_12,skAuth_1),uid_12)),n_18,pk(skAuth_1)),n_18)) at {265} in copy a_12 received at {70} in copy a_13
+
+event user_authenticated(uid_12) at {86} in copy a_13
+
+event access_count(c0) at {97} in copy a_13
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c3,Credential(mac(uid_12,skAuth_1),uid_12)),n_17,pk(skAuth_1)),n_17)) at {265} in copy a_11 received at {98} in copy a_13
+
+event user_authenticated(uid_12) at {114} in copy a_13
+
+event access_count(c1) at {124} in copy a_13
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c2,Credential(mac(uid_12,skAuth_1),uid_12)),n_16,pk(skAuth_1)),n_16)) at {265} in copy a_10 received at {125} in copy a_13
+
+event user_authenticated(uid_12) at {141} in copy a_13
+
+event access_count(c2) at {150} in copy a_13
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c1,Credential(mac(uid_12,skAuth_1),uid_12)),n_15,pk(skAuth_1)),n_15)) at {265} in copy a_9 received at {151} in copy a_13
+
+event user_authenticated(uid_12) at {167} in copy a_13
+
+event access_count(c3) at {175} in copy a_13
+
+out(auth_net, Cipher(aenc_internal(AuthRequestPlain(today,c0,Credential(mac(uid_12,skAuth_1),uid_12)),n_14,pk(skAuth_1)),n_14)) at {265} in copy a_8 received at {176} in copy a_13
+
+event user_authenticated(uid_12) at {192} in copy a_13
+
+event access_count(c4) at {199} in copy a_13 (goal)
+
+The event access_count(c4) is executed at {199} in copy a_13.
+A trace has been found.
+RESULT not event(access_count(c4)) is false.
+-- Query not event(access_count(c5)) in process 1.
+Translating the process into Horn clauses...
+Completing...
+200 rules inserted. Base: 200 rules (32 with conclusion selected). Queue: 336 rules.
+400 rules inserted. Base: 400 rules (33 with conclusion selected). Queue: 339 rules.
+600 rules inserted. Base: 600 rules (33 with conclusion selected). Queue: 339 rules.
+800 rules inserted. Base: 800 rules (35 with conclusion selected). Queue: 330 rules.
+1000 rules inserted. Base: 1000 rules (35 with conclusion selected). Queue: 330 rules.
+1200 rules inserted. Base: 1188 rules (36 with conclusion selected). Queue: 330 rules.
+1400 rules inserted. Base: 1373 rules (38 with conclusion selected). Queue: 565 rules.
+1600 rules inserted. Base: 1536 rules (38 with conclusion selected). Queue: 562 rules.
+1800 rules inserted. Base: 1715 rules (40 with conclusion selected). Queue: 862 rules.
+2000 rules inserted. Base: 1888 rules (41 with conclusion selected). Queue: 894 rules.
+2200 rules inserted. Base: 1962 rules (41 with conclusion selected). Queue: 894 rules.
+2400 rules inserted. Base: 2115 rules (43 with conclusion selected). Queue: 1227 rules.
+2600 rules inserted. Base: 2291 rules (44 with conclusion selected). Queue: 1301 rules.
+2800 rules inserted. Base: 2479 rules (45 with conclusion selected). Queue: 1355 rules.
+3000 rules inserted. Base: 2568 rules (45 with conclusion selected). Queue: 1367 rules.
+3200 rules inserted. Base: 2615 rules (47 with conclusion selected). Queue: 1764 rules.
+3400 rules inserted. Base: 2815 rules (48 with conclusion selected). Queue: 1854 rules.
+3600 rules inserted. Base: 2967 rules (49 with conclusion selected). Queue: 1927 rules.
+3800 rules inserted. Base: 3155 rules (51 with conclusion selected). Queue: 2022 rules.
+4000 rules inserted. Base: 3271 rules (51 with conclusion selected). Queue: 2068 rules.
+4200 rules inserted. Base: 3459 rules (52 with conclusion selected). Queue: 2143 rules.
+4400 rules inserted. Base: 3487 rules (52 with conclusion selected). Queue: 2156 rules.
+4600 rules inserted. Base: 3535 rules (55 with conclusion selected). Queue: 2740 rules.
+4800 rules inserted. Base: 3735 rules (57 with conclusion selected). Queue: 2858 rules.
+5000 rules inserted. Base: 3935 rules (60 with conclusion selected). Queue: 3020 rules.
+5200 rules inserted. Base: 4063 rules (60 with conclusion selected). Queue: 3056 rules.
+5400 rules inserted. Base: 4263 rules (63 with conclusion selected). Queue: 3216 rules.
+5600 rules inserted. Base: 4351 rules (63 with conclusion selected). Queue: 3251 rules.
+5800 rules inserted. Base: 4531 rules (64 with conclusion selected). Queue: 3325 rules.
+6000 rules inserted. Base: 4701 rules (67 with conclusion selected). Queue: 3418 rules.
+6200 rules inserted. Base: 4793 rules (67 with conclusion selected). Queue: 3414 rules.
+6400 rules inserted. Base: 4973 rules (68 with conclusion selected). Queue: 3480 rules.
+6600 rules inserted. Base: 5093 rules (68 with conclusion selected). Queue: 3440 rules.
+6800 rules inserted. Base: 5235 rules (73 with conclusion selected). Queue: 3465 rules.
+7000 rules inserted. Base: 5435 rules (78 with conclusion selected). Queue: 3589 rules.
+7200 rules inserted. Base: 5635 rules (78 with conclusion selected). Queue: 3721 rules.
+7400 rules inserted. Base: 5818 rules (84 with conclusion selected). Queue: 3829 rules.
+7600 rules inserted. Base: 5949 rules (87 with conclusion selected). Queue: 3868 rules.
+7800 rules inserted. Base: 6137 rules (87 with conclusion selected). Queue: 3986 rules.
+8000 rules inserted. Base: 6337 rules (95 with conclusion selected). Queue: 4138 rules.
+8200 rules inserted. Base: 6401 rules (95 with conclusion selected). Queue: 4135 rules.
+8400 rules inserted. Base: 6577 rules (95 with conclusion selected). Queue: 4181 rules.
+8600 rules inserted. Base: 6771 rules (101 with conclusion selected). Queue: 4307 rules.
+8800 rules inserted. Base: 6889 rules (104 with conclusion selected). Queue: 4373 rules.
+9000 rules inserted. Base: 6991 rules (104 with conclusion selected). Queue: 4356 rules.
+9200 rules inserted. Base: 7165 rules (106 with conclusion selected). Queue: 4401 rules.
+9400 rules inserted. Base: 7353 rules (112 with conclusion selected). Queue: 4444 rules.
+9600 rules inserted. Base: 7414 rules (112 with conclusion selected). Queue: 4426 rules.
+9800 rules inserted. Base: 7547 rules (112 with conclusion selected). Queue: 4415 rules.
+10000 rules inserted. Base: 7603 rules (113 with conclusion selected). Queue: 4414 rules.
+10200 rules inserted. Base: 7677 rules (117 with conclusion selected). Queue: 4413 rules.
+10400 rules inserted. Base: 7847 rules (126 with conclusion selected). Queue: 4476 rules.
+10600 rules inserted. Base: 8004 rules (132 with conclusion selected). Queue: 4543 rules.
+10800 rules inserted. Base: 8149 rules (132 with conclusion selected). Queue: 4592 rules.
+11000 rules inserted. Base: 8349 rules (134 with conclusion selected). Queue: 4758 rules.
+11200 rules inserted. Base: 8521 rules (144 with conclusion selected). Queue: 4811 rules.
+11400 rules inserted. Base: 8635 rules (150 with conclusion selected). Queue: 4826 rules.
+11600 rules inserted. Base: 8743 rules (150 with conclusion selected). Queue: 4826 rules.
+11800 rules inserted. Base: 8922 rules (150 with conclusion selected). Queue: 4908 rules.
+12000 rules inserted. Base: 9119 rules (158 with conclusion selected). Queue: 5043 rules.
+12200 rules inserted. Base: 9278 rules (166 with conclusion selected). Queue: 5081 rules.
+12400 rules inserted. Base: 9332 rules (166 with conclusion selected). Queue: 5069 rules.
+12600 rules inserted. Base: 9473 rules (166 with conclusion selected). Queue: 5060 rules.
+12800 rules inserted. Base: 9647 rules (171 with conclusion selected). Queue: 5102 rules.
+13000 rules inserted. Base: 9841 rules (181 with conclusion selected). Queue: 5180 rules.
+13200 rules inserted. Base: 9988 rules (184 with conclusion selected). Queue: 5170 rules.
+13400 rules inserted. Base: 10054 rules (184 with conclusion selected). Queue: 5153 rules.
+13600 rules inserted. Base: 10187 rules (186 with conclusion selected). Queue: 5140 rules.
+13800 rules inserted. Base: 10347 rules (191 with conclusion selected). Queue: 5128 rules.
+14000 rules inserted. Base: 10486 rules (192 with conclusion selected). Queue: 5079 rules.
+14200 rules inserted. Base: 10563 rules (192 with conclusion selected). Queue: 5054 rules.
+14400 rules inserted. Base: 10701 rules (192 with conclusion selected). Queue: 4991 rules.
+14600 rules inserted. Base: 10877 rules (192 with conclusion selected). Queue: 4895 rules.
+14800 rules inserted. Base: 11036 rules (202 with conclusion selected). Queue: 4901 rules.
+15000 rules inserted. Base: 11191 rules (212 with conclusion selected). Queue: 4905 rules.
+15200 rules inserted. Base: 11287 rules (218 with conclusion selected). Queue: 4920 rules.
+15400 rules inserted. Base: 11405 rules (218 with conclusion selected). Queue: 4928 rules.
+15600 rules inserted. Base: 11596 rules (218 with conclusion selected). Queue: 5016 rules.
+15800 rules inserted. Base: 11793 rules (227 with conclusion selected). Queue: 5154 rules.
+16000 rules inserted. Base: 11961 rules (236 with conclusion selected). Queue: 5163 rules.
+16200 rules inserted. Base: 12093 rules (242 with conclusion selected). Queue: 5132 rules.
+16400 rules inserted. Base: 12145 rules (242 with conclusion selected). Queue: 5122 rules.
+16600 rules inserted. Base: 12279 rules (242 with conclusion selected). Queue: 5114 rules.
+16800 rules inserted. Base: 12442 rules (245 with conclusion selected). Queue: 5128 rules.
+17000 rules inserted. Base: 12636 rules (257 with conclusion selected). Queue: 5203 rules.
+17200 rules inserted. Base: 12822 rules (266 with conclusion selected). Queue: 5267 rules.
+17400 rules inserted. Base: 12957 rules (266 with conclusion selected). Queue: 5211 rules.
+17600 rules inserted. Base: 13037 rules (266 with conclusion selected). Queue: 5186 rules.
+17800 rules inserted. Base: 13128 rules (267 with conclusion selected). Queue: 5167 rules.
+18000 rules inserted. Base: 13294 rules (274 with conclusion selected). Queue: 5152 rules.
+18200 rules inserted. Base: 13461 rules (282 with conclusion selected). Queue: 5135 rules.
+18400 rules inserted. Base: 13630 rules (284 with conclusion selected). Queue: 5069 rules.
+18600 rules inserted. Base: 13743 rules (284 with conclusion selected). Queue: 5023 rules.
+18800 rules inserted. Base: 13819 rules (284 with conclusion selected). Queue: 4996 rules.
+19000 rules inserted. Base: 13929 rules (284 with conclusion selected). Queue: 4941 rules.
+19200 rules inserted. Base: 14073 rules (284 with conclusion selected). Queue: 4875 rules.
+19400 rules inserted. Base: 14153 rules (284 with conclusion selected). Queue: 4844 rules.
+19600 rules inserted. Base: 14265 rules (286 with conclusion selected). Queue: 4798 rules.
+19800 rules inserted. Base: 14409 rules (290 with conclusion selected). Queue: 4756 rules.
+20000 rules inserted. Base: 14573 rules (302 with conclusion selected). Queue: 4725 rules.
+20200 rules inserted. Base: 14637 rules (302 with conclusion selected). Queue: 4714 rules.
+20400 rules inserted. Base: 14739 rules (302 with conclusion selected). Queue: 4699 rules.
+20600 rules inserted. Base: 14891 rules (302 with conclusion selected). Queue: 4693 rules.
+20800 rules inserted. Base: 15080 rules (312 with conclusion selected). Queue: 4761 rules.
+21000 rules inserted. Base: 15275 rules (324 with conclusion selected). Queue: 4841 rules.
+21200 rules inserted. Base: 15437 rules (326 with conclusion selected). Queue: 4796 rules.
+21400 rules inserted. Base: 15589 rules (326 with conclusion selected). Queue: 4730 rules.
+21600 rules inserted. Base: 15685 rules (326 with conclusion selected). Queue: 4700 rules.
+21800 rules inserted. Base: 15753 rules (326 with conclusion selected). Queue: 4676 rules.
+22000 rules inserted. Base: 15897 rules (332 with conclusion selected). Queue: 4658 rules.
+22200 rules inserted. Base: 16064 rules (340 with conclusion selected). Queue: 4640 rules.
+22400 rules inserted. Base: 16231 rules (349 with conclusion selected). Queue: 4623 rules.
+22600 rules inserted. Base: 16412 rules (350 with conclusion selected). Queue: 4532 rules.
+22800 rules inserted. Base: 16548 rules (350 with conclusion selected). Queue: 4471 rules.
+23000 rules inserted. Base: 16660 rules (350 with conclusion selected). Queue: 4427 rules.
+23200 rules inserted. Base: 16747 rules (350 with conclusion selected). Queue: 4397 rules.
+23400 rules inserted. Base: 16839 rules (350 with conclusion selected). Queue: 4366 rules.
+23600 rules inserted. Base: 17017 rules (350 with conclusion selected). Queue: 4260 rules.
+23800 rules inserted. Base: 17151 rules (350 with conclusion selected). Queue: 4198 rules.
+24000 rules inserted. Base: 17313 rules (350 with conclusion selected). Queue: 4101 rules.
+24200 rules inserted. Base: 17489 rules (350 with conclusion selected). Queue: 3994 rules.
+24400 rules inserted. Base: 17678 rules (350 with conclusion selected). Queue: 3840 rules.
+24600 rules inserted. Base: 17831 rules (350 with conclusion selected). Queue: 3762 rules.
+24800 rules inserted. Base: 17985 rules (350 with conclusion selected). Queue: 3700 rules.
+25000 rules inserted. Base: 18091 rules (350 with conclusion selected). Queue: 3658 rules.
+25200 rules inserted. Base: 18167 rules (350 with conclusion selected). Queue: 3632 rules.
+25400 rules inserted. Base: 18287 rules (354 with conclusion selected). Queue: 3610 rules.
+25600 rules inserted. Base: 18454 rules (362 with conclusion selected). Queue: 3594 rules.
+25800 rules inserted. Base: 18619 rules (370 with conclusion selected). Queue: 3577 rules.
+26000 rules inserted. Base: 18797 rules (374 with conclusion selected). Queue: 3504 rules.
+26200 rules inserted. Base: 18980 rules (374 with conclusion selected). Queue: 3392 rules.
+26400 rules inserted. Base: 19117 rules (374 with conclusion selected). Queue: 3331 rules.
+26600 rules inserted. Base: 19232 rules (374 with conclusion selected). Queue: 3285 rules.
+26800 rules inserted. Base: 19327 rules (374 with conclusion selected). Queue: 3251 rules.
+27000 rules inserted. Base: 19419 rules (374 with conclusion selected). Queue: 3223 rules.
+27200 rules inserted. Base: 19581 rules (374 with conclusion selected). Queue: 3116 rules.
+27400 rules inserted. Base: 19746 rules (374 with conclusion selected). Queue: 3026 rules.
+27600 rules inserted. Base: 19890 rules (374 with conclusion selected). Queue: 2955 rules.
+27800 rules inserted. Base: 20045 rules (374 with conclusion selected). Queue: 2865 rules.
+28000 rules inserted. Base: 20229 rules (374 with conclusion selected). Queue: 2750 rules.
+28200 rules inserted. Base: 20421 rules (374 with conclusion selected). Queue: 2612 rules.
+28400 rules inserted. Base: 20609 rules (374 with conclusion selected). Queue: 2484 rules.
+28600 rules inserted. Base: 20791 rules (374 with conclusion selected). Queue: 2374 rules.
+28800 rules inserted. Base: 20930 rules (374 with conclusion selected). Queue: 2309 rules.
+29000 rules inserted. Base: 21045 rules (374 with conclusion selected). Queue: 2264 rules.
+29200 rules inserted. Base: 21139 rules (374 with conclusion selected). Queue: 2232 rules.
+29400 rules inserted. Base: 21231 rules (374 with conclusion selected). Queue: 2201 rules.
+29600 rules inserted. Base: 21395 rules (374 with conclusion selected). Queue: 2084 rules.
+29800 rules inserted. Base: 21574 rules (374 with conclusion selected). Queue: 1979 rules.
+30000 rules inserted. Base: 21725 rules (374 with conclusion selected). Queue: 1902 rules.
+30200 rules inserted. Base: 21871 rules (374 with conclusion selected). Queue: 1829 rules.
+30400 rules inserted. Base: 22051 rules (374 with conclusion selected). Queue: 1702 rules.
+30600 rules inserted. Base: 22233 rules (374 with conclusion selected). Queue: 1589 rules.
+30800 rules inserted. Base: 22427 rules (374 with conclusion selected). Queue: 1440 rules.
+31000 rules inserted. Base: 22627 rules (374 with conclusion selected). Queue: 1278 rules.
+31200 rules inserted. Base: 22803 rules (374 with conclusion selected). Queue: 1178 rules.
+31400 rules inserted. Base: 22952 rules (374 with conclusion selected). Queue: 1102 rules.
+31600 rules inserted. Base: 23098 rules (374 with conclusion selected). Queue: 1029 rules.
+31800 rules inserted. Base: 23283 rules (374 with conclusion selected). Queue: 893 rules.
+32000 rules inserted. Base: 23466 rules (374 with conclusion selected). Queue: 776 rules.
+32200 rules inserted. Base: 23659 rules (374 with conclusion selected). Queue: 630 rules.
+32400 rules inserted. Base: 23858 rules (374 with conclusion selected). Queue: 467 rules.
+32600 rules inserted. Base: 24041 rules (374 with conclusion selected). Queue: 349 rules.
+32800 rules inserted. Base: 24235 rules (374 with conclusion selected). Queue: 200 rules.
+33000 rules inserted. Base: 24435 rules (374 with conclusion selected). Queue: 26 rules.
+Starting query not event(access_count(c5))
+RESULT not event(access_count(c5)) is true.
+
+--------------------------------------------------------------
+Verification summary:
+
+Query not event(access_count(c4)) is false.
+
+Query not event(access_count(c5)) is true.
+
+--------------------------------------------------------------
+
+nixos@nixos ~/Documents-Linux/star-proverif bench/rate-limit-v0.0.1 @

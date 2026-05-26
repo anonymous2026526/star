@@ -1,0 +1,83 @@
+set preciseActions = true.
+
+letfun ServiceAuthCore(r1: bitstring, r2: bitstring, target: bitstring) =
+  if r1 <> target && r2 <> target then 0.
+
+letfun ServiceAuthCore4(r1: bitstring, r2: bitstring, r3: bitstring, r4: bitstring, target: bitstring) =
+  let a = ServiceAuthCore(r1, r2, target) in
+  let b = ServiceAuthCore(r3, r4, target) in
+  0.
+
+letfun ServiceAuthCore8(r1: bitstring, r2: bitstring, r3: bitstring, r4: bitstring,
+  r5: bitstring, r6: bitstring, r7: bitstring, r8: bitstring, target: bitstring) =
+  let a = ServiceAuthCore(r1, r2, target) in
+  let b = ServiceAuthCore(r3, r4, target) in
+  let c = ServiceAuthCore(r5, r6, target) in
+  let d = ServiceAuthCore(r7, r8, target) in
+  0.
+
+event access_count(counter).
+
+
+query event(access_count(c0)).
+query event(access_count(c1)).
+query event(access_count(c2)).
+query event(checkpoint()).
+
+table nyms(bitstring).
+
+let ServerAuthSix(sk: key) =
+  in(auth_net, authReq: cipher);
+  let (h0:bitstring, uid: bitstring) = LibAuthCoreWithUid(authReq, today, sk) in
+  event checkpoint();
+  get nyms(=h0) in
+    0
+  else
+    event access_count(c0);
+    insert nyms(h0);
+
+  in(auth_net, authReq: cipher);
+  let (h1:bitstring, =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  get nyms(=h1) in
+    0
+  else
+    event access_count(c1);
+    insert nyms(h1);
+
+  in(auth_net, authReq: cipher);
+  let (h2:bitstring,  =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  get nyms(=h2) in
+    0
+  else
+    event access_count(c2);
+    insert nyms(h2);
+
+  in(auth_net, authReq: cipher);
+  let (h3:bitstring,  =uid) = LibAuthCoreWithUid(authReq, today, sk) in
+  get nyms(=h3) in
+    0
+  else
+    event access_count(c3);
+    insert nyms(h3)
+
+    .
+
+let Server(sk: key, pk: pkey) =
+  !ServerRegister(sk)
+  | !ServerAuth(sk)
+  | !ServerAuthSix(sk).
+
+let System =
+  new skAuth: key;
+  let pkAuth: pkey = pk(skAuth) in
+  (
+  Server(skAuth, pkAuth)
+  | !(
+      new id: identity;
+      UserRegister(pkAuth, id)
+    )
+  | !UserAuth(pkAuth)
+  ).
+
+process
+  System

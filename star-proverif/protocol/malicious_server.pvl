@@ -1,0 +1,40 @@
+free register_library_call: channel.
+free register_library_return: channel.
+free auth_library_call: channel.
+free auth_library_return: channel.
+
+let ServiceRegister =
+  in(reg_net, regReq: bitstring);
+  let RegisterRequest(id: identity, cipherIn: cipher) = regReq in
+  out(register_library_call, cipherIn);
+  in(register_library_return, cipherOut: cipher);
+  out(reg_net, cipherOut).
+  
+let LibRegister(sk: key) = 
+  in(register_library_call, cipherIn: cipher);
+  let cipherOut = LibRegisterCore(cipherIn, sk) in 
+  out(register_library_return, cipherOut).
+
+let ServiceAuth(sess: session, t: period) =
+  in(auth_net, authReq: cipher);
+
+  out(auth_library_call, (authReq, t, sess));
+  in(auth_library_return, (h: bitstring, =sess));
+  
+  (* let resp = ServiceAuthCore(h) in *)
+  event checkpoint()
+  .
+
+let LibAuth(sess: session, sk: key) = 
+  in(auth_library_call, (authReq:cipher, t:period, =sess));
+  let h = LibAuthCore(authReq, t, sk) in
+  out(auth_library_return, (h, sess))
+  .
+  
+let Server(t: period, sk: key, pk: pkey) =
+  new sess: session;
+  ( ServiceRegister()
+  | ServiceAuth(sess, t)
+  | !LibRegister(sk)
+  | !LibAuth(sess, sk)
+  ).

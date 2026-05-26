@@ -1,0 +1,16 @@
+[package]
+name = "timecop"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = []
+timecop = ["dep:crabgrind"]
+
+
+[dependencies]
+crabgrind = { version = "0.2", optional = true }
+
+[[bin]]
+name = "example"
+path = "./src/example.rs"

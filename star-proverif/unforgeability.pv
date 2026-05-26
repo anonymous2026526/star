@@ -1,0 +1,28 @@
+
+query uid: bitstring; event(user_authenticated(uid)) ==> event(user_registered(uid)).
+query uid: bitstring; event(user_authenticated(uid)) ==> event(user_authenticating(uid)).
+
+query uid: bitstring; event(user_authenticated(uid)).
+
+query event(checkpoint()).
+
+let Server(sk: key, pk: pkey) =
+  !ServerRegister(sk)
+  | !ServerAuth(sk).
+
+let System =
+  new skAuth: key;
+  let pkAuth: pkey = pk(skAuth) in
+  ( 
+    Server(skAuth, pkAuth)
+  | !(
+      new id: identity;
+      UserRegister(pkAuth, id)
+    ) 
+  | !( 
+      UserAuth(pkAuth)
+    )
+  ).
+
+process
+  System
